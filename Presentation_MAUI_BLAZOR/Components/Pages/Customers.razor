@@ -1,0 +1,119 @@
+﻿@page "/customers"
+
+<div class=@(addUserMenuOpened ? "hidden" : "top-bar")>
+    <div class="top-bar-adduser-text" @onclick="()=>{addUserMenuOpened = !addUserMenuOpened;}">
+        <h6>Add customer </h6><h2>&#43;</h2>
+    </div>
+</div>
+<div class=@(addUserMenuOpened ? "top-bar add-user" : "hidden")>
+    <div class="top-bar-label">
+        <h5>Add customer</h5>
+        <button type="button" @onclick="()=>{addUserMenuOpened = !addUserMenuOpened;}">Cancel</button>
+    </div>
+
+    <div class="add-user-input-container">
+        <div >
+            <div class="add-user-input-field">
+                <p>Organisation Id</p>
+                <InputText @bind-Value="_registrationForm.OrganisationNumber" typeof="text" placeholder="Oranisation Id" />
+            </div>
+            <div class="add-user-input-field">
+                <p>Company name</p>
+                <InputText @bind-Value="_registrationForm.CompanyName" typeof="text" placeholder="Company name" />
+            </div>
+        </div>
+        <div >
+            <div class="add-user-input-field">
+                <p>First name <span>(required)</span></p>
+                <InputText @bind-Value="_registrationForm.FirstName" typeof="text" placeholder="First name..." />
+            </div>
+            <div class="add-user-input-field">
+                <p>Last name <span>(required)</span></p>
+                <InputText @bind-Value="_registrationForm.LastName" typeof="text" placeholder="Last name..." />
+            </div>
+        </div>
+        <div >
+            <div class="add-user-input-field">
+                <p>Email <span>(required)</span></p>
+                <InputText @bind-Value="_registrationForm.Email" typeof="text" placeholder="Email adress..." />
+            </div>
+            <div class="add-user-input-field">
+                <p>Phone</p>
+                <InputText @bind-Value="_registrationForm.Phone" typeof="text" placeholder="Phone number..." />
+            </div>
+        </div>
+
+        <button type="button" @onclick="SubmitInputs">Add customer</button>
+    </div>
+</div>
+
+<div class="customer-list-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Org. number</th>
+                <th>Company name</th>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Email</th>
+                <th>Phone</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Customer customer in _customerlist)
+            {
+                <tr class="hover-darken" @onclick="()=>{if(selectedCustomer == customer){selectedCustomer=null!;}else{selectedCustomer = customer;};}">
+                    <td>@customer.Id</td>
+                    <td>@customer.OrganisationNumber</td>
+                    <td>@customer.CompanyName</td>
+                    <td>@customer.FirstName</td>
+                    <td>@customer.LastName</td>
+                    <td>@customer.Email</td>
+                    <td>@customer.Phone</td>
+                </tr>
+                @if(selectedCustomer == customer)
+                {
+                    <div>
+                        <p>List of projects ordered by @customer.FirstName</p>
+                    </div>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private CustomerRegistrationForm _registrationForm = new();
+    private List<Customer> _customerlist = [];
+    private bool addUserMenuOpened = false;
+    private Customer selectedCustomer = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var x = await _customerService.GetAllAsync();
+        _customerlist = x.ToList();
+    }
+
+    private async Task SubmitInputs()
+    {
+        if (string.IsNullOrWhiteSpace(_registrationForm.FirstName))
+            return;
+        if (string.IsNullOrWhiteSpace(_registrationForm.LastName))
+            return;
+        if (string.IsNullOrWhiteSpace(_registrationForm.Email))
+            return;
+
+        _registrationForm.Email = _registrationForm.Email.ToLower();
+
+        var result = await _customerService.CreateAsync(_registrationForm);
+        if (result)
+            UserAdded();
+    }
+
+    private void UserAdded()
+    {
+        _registrationForm = new();
+        addUserMenuOpened = false;
+    }
+}

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data.csproj", "{E7D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "..\Business\Business.csproj", "{1889EDF3-3F75-4CD6-99BD-E7B409C54728}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation_MAUI_BLAZOR", "..\Presentation_MAUI_BLAZOR\Presentation_MAUI_BLAZOR.csproj", "{1010A51E-CCD4-43D8-A5B4-A715949DB37F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{1889EDF3-3F75-4CD6-99BD-E7B409C54728}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1889EDF3-3F75-4CD6-99BD-E7B409C54728}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1889EDF3-3F75-4CD6-99BD-E7B409C54728}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1010A51E-CCD4-43D8-A5B4-A715949DB37F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1010A51E-CCD4-43D8-A5B4-A715949DB37F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1010A51E-CCD4-43D8-A5B4-A715949DB37F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1010A51E-CCD4-43D8-A5B4-A715949DB37F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

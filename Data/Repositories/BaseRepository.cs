@@ -44,13 +44,13 @@ public class BaseRepository<TEntity>(DataContext context) : IBaseRepository<TEnt
         if (expression == null)
             return null!;
 
+        Debug.WriteLine($"GetAsync. Returning {nameof(TEntity)}");
         return await _dbSet.FirstOrDefaultAsync(expression) ?? null!;
     }
     public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> expression)
     {
         return await _dbSet.AnyAsync(expression);
     }
-
 
     // Update
     public async Task<TEntity> UpdateAsync(Expression<Func<TEntity, bool>> expression, TEntity updatedEntity)

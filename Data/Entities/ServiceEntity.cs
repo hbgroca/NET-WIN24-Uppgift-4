@@ -7,17 +7,9 @@ namespace Data.Entities
     {
         [Key]
         public int Id { get; set; }
+        public string ServiceName { get; set; } = null!;
 
-        [Required]
-        [Column(TypeName = "nvarchar(125)")]
-        public string Name { get; set; } = null!;
-
-        [Required]
         [Column(TypeName = "money")]
         public decimal Price { get; set; }
-
-        public int ProjectId { get; set; }
-
-        public ProjectEntity Project { get; set; } = null!;
     }
 }

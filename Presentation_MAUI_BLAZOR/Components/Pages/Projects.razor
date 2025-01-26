@@ -1,0 +1,47 @@
+﻿@page "/projects"
+
+<h2>Projects</h2>
+
+<InputNumber @bind-Value="projectId" typeof="number" placeholder="Project ID" />
+<button type="button" @onclick="()=>GetUsersById(projectId)">Collect By ID</button>
+
+<button type="button" @onclick="SubmitUserInputs">Collect All</button>
+
+@if (projects != null)
+{
+    foreach (var project in projects)
+    {
+        <p>(Id: @project.Id): @project.Name</p>
+        <p>(Manager: @project.Manager)</p>
+        <p>(Customer: @project.Customer)</p>
+        <p>(Services: @project.Services.Count();)</p>
+        foreach (var services in project.Services)
+        {
+            <p>@services.Name</p>
+        };
+    };
+}
+
+@code {
+    private int projectId = 1;
+    private IEnumerable<Project> projects = [];
+
+    private async Task SubmitUserInputs()
+    {
+        projects = await _projectService.GetAllProjectsAsync();
+    }
+
+    private async Task GetUsersById(int id)
+    {
+
+
+        var project = await _projectService.GetProjectByIdAsync(id);
+        if (project != null)
+        {
+            projects = new List<Project>
+            {
+                project
+            };
+        }
+    }
+}

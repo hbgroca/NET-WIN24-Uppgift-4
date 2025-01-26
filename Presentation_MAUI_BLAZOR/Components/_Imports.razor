@@ -1,0 +1,24 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using Presentation_MAUI_BLAZOR
+@using Presentation_MAUI_BLAZOR.Components
+
+@using Business.Dtos
+@using Business.Services
+@using Business.Models
+@using Business.Factories
+@using Business.Interfaces
+@using Data.Interfaces
+@using Data.Entities
+
+@inject ICustomerRepository _customerRepository
+@inject IProjectRepository _projectRepository
+@inject IServiceRepositrory _serviceRepository
+
+@inject ICustomerServices _customerService
+@inject IProjectServices _projectService

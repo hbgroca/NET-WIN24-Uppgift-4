@@ -10,34 +10,25 @@ namespace Data.Entities
 
         [Required]
         [Column(TypeName = "nvarchar(125)")]
-        public string Name { get; set; } = null!;
-
-
-        [Column(TypeName = "nvarchar(max)")]
+        public string ProjectName { get; set; } = null!;
         public string? Description { get; set; }
 
-        public DateTime? StartDate { get; set; }
+        [Required]
+        [Column(TypeName = "date")]
+        public DateTime StartDate { get; set; }
+
+        [Column(TypeName = "date")]
         public DateTime? EndDate { get; set; }
 
-
-        [Required]
         public int ManagerId { get; set; }
-        public UserEntity Manager { get; set; } = null!;
+        public EmployeeEntity Manager { get; set; } = null!;
 
-        [Required]
         public int CustomerId { get; set; }
         public CustomerEntity Customer { get; set; } = null!;
 
-        [Required]
-        public ProjectStatus Status { get; set; }
+        public int StatusId { get; set; }
+        public StatusTypeEntity Status { get; set; } = null!;
 
-        public ICollection<UserProjectsEntity> UserProjects { get; set; } = null!;
-    }
-
-    public enum ProjectStatus
-    {
-        EnPåbörjat,
-        Pågående,
-        Avslutat
+        public ICollection<ServiceEntity> Services { get; set; } = new List<ServiceEntity>();
     }
 }

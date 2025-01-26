@@ -12,11 +12,11 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
 
     // Skapa tabell enligt UserEntity
     public DbSet<ServiceEntity> Services { get; set; }
-    public DbSet<LoginEntity> Logins { get; set; }
-    public DbSet<UserProjectsEntity> UserProjects { get; set; }
-    public DbSet<UserEntity> Users { get; set; }
     public DbSet<ProjectEntity> Projects { get; set; }
     public DbSet<CustomerEntity> Customers { get; set; }
+    public DbSet<StatusTypeEntity> StatusType { get; set; }
+    public DbSet<EmployeeEntity> Employees { get; set; }
+
 
 
     // Overrides
@@ -44,19 +44,10 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
         //    .HasIndex(x => x.Email)
         //    .IsUnique();
 
-        // Configure composite key for UserProjectsEntity
-        modelBuilder.Entity<UserProjectsEntity>()
-            .HasKey(up => new { up.UserId, up.ProjectId });
-
-        // Configure relationships
-        modelBuilder.Entity<UserProjectsEntity>()
-            .HasOne(up => up.User)
-            .WithMany(u => u.UserProjects)
-            .HasForeignKey(up => up.UserId);
-
-        modelBuilder.Entity<UserProjectsEntity>()
-            .HasOne(up => up.Project)
-            .WithMany(p => p.UserProjects)
-            .HasForeignKey(up => up.ProjectId);
+        //modelBuilder.Entity<ProjectEntity>()
+        //    .HasOne(x => x.Manager)
+        //    .WithMany(x => x.Pr)
+        //    .HasForeignKey(x => x.ManagerId)
+        //    .OnDelete(DeleteBehavior.Restrict);
     }
 }

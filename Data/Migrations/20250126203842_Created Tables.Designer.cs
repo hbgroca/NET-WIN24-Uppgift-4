@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250124085922_Generate Tables")]
-    partial class GenerateTables
+    [Migration("20250126203842_Created Tables")]
+    partial class CreatedTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,35 +33,31 @@ namespace Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CompanyName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(125)");
+
+                    b.Property<string>("CompanyNr")
+                        .HasColumnType("nvarchar(125)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("varchar(150)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(125)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("OrganisationNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(125)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(25)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("Data.Entities.LoginEntity", b =>
+            modelBuilder.Entity("Data.Entities.EmployeeEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -71,21 +67,23 @@ namespace Data.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("varchar(125)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Logins");
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
@@ -103,19 +101,19 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<int>("ManagerId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("ProjectName")
                         .IsRequired()
                         .HasColumnType("nvarchar(125)");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("date");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("StatusId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -123,6 +121,8 @@ namespace Data.Migrations
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("ManagerId");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("Projects");
                 });
@@ -135,24 +135,24 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(125)");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("money");
 
-                    b.Property<int>("ProjectId")
+                    b.Property<int?>("ProjectEntityId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ServiceName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex("ProjectEntityId");
 
                     b.ToTable("Services");
                 });
 
-            modelBuilder.Entity("Data.Entities.UserEntity", b =>
+            modelBuilder.Entity("Data.Entities.StatusTypeEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -160,110 +160,52 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("FirstName")
+                    b.Property<string>("StatusDescription")
                         .IsRequired()
-                        .HasColumnType("nvarchar(125)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(125)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Data.Entities.UserProjectsEntity", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "ProjectId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("UserProjects");
-                });
-
-            modelBuilder.Entity("Data.Entities.LoginEntity", b =>
-                {
-                    b.HasOne("Data.Entities.UserEntity", "User")
-                        .WithOne("Login")
-                        .HasForeignKey("Data.Entities.LoginEntity", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
+                    b.ToTable("StatusType");
                 });
 
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
                 {
                     b.HasOne("Data.Entities.CustomerEntity", "Customer")
-                        .WithMany("Projects")
+                        .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Data.Entities.UserEntity", "Manager")
+                    b.HasOne("Data.Entities.EmployeeEntity", "Manager")
                         .WithMany()
                         .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Entities.StatusTypeEntity", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
 
                     b.Navigation("Manager");
+
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Data.Entities.ServiceEntity", b =>
                 {
-                    b.HasOne("Data.Entities.ProjectEntity", "Project")
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("Data.Entities.UserProjectsEntity", b =>
-                {
-                    b.HasOne("Data.Entities.ProjectEntity", "Project")
-                        .WithMany("UserProjects")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Entities.UserEntity", "User")
-                        .WithMany("UserProjects")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Data.Entities.CustomerEntity", b =>
-                {
-                    b.Navigation("Projects");
+                    b.HasOne("Data.Entities.ProjectEntity", null)
+                        .WithMany("Services")
+                        .HasForeignKey("ProjectEntityId");
                 });
 
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
                 {
-                    b.Navigation("UserProjects");
-                });
-
-            modelBuilder.Entity("Data.Entities.UserEntity", b =>
-                {
-                    b.Navigation("Login")
-                        .IsRequired();
-
-                    b.Navigation("UserProjects");
+                    b.Navigation("Services");
                 });
 #pragma warning restore 612, 618
         }

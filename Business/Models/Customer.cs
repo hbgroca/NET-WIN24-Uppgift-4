@@ -1,8 +1,9 @@
 ﻿namespace Business.Models;
 
-internal class Customer
+public class Customer
 {
     public int Id { get; set; }
+    public string? OrganisationNumber { get; set; }
     public string? CompanyName { get; set; }
     public string? FirstName { get; set; } = null!;
     public string? LastName { get; set; } = null!;
