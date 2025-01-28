@@ -1,11 +1,9 @@
-﻿
-using Business.Dtos;
+﻿using Business.Dtos;
 using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
 using Data.Entities;
 using Data.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services;
 
@@ -13,27 +11,25 @@ public class ProjectServices(IProjectRepository projectRepository) : IProjectSer
 {
     private readonly IProjectRepository _projectRepository = projectRepository;
 
-    //public async Task<ProjectEntity> Create(ProjectRegistrationForm form)
-    //{
-    //    if (form == null)
-    //    {
-    //        return null!;
-    //    }
-    //    return new ProjectEntity
-    //    {
-    //        Name = form.Name,
-    //        StartDate = DateTime.Now,
-    //        ManagerId = form.ManagerId,
-    //        CustomerId = form.CustomerId,
-    //        //Status = 
-    //    };
-    //}
+    // Create
+    public async Task<Project> Create(ProjectRegistrationForm form)
+    {
+        if (form == null)
+            return null!;
 
-    
+        // Remap dto to entity and add to db
+        ProjectEntity result = await _projectRepository.CreateAsync(ProjectFactory.Create(form));
 
+        if(result != null)
+            return ProjectFactory.Create(result);
+
+        return null!;
+    }
+    // Read
     public async Task<IEnumerable<Project>> GetAllProjectsAsync()
     {
-        var entities = await _projectRepository.GetAllAsync();
+        // Get entities from db
+        var entities = await _projectRepository.GetProjectsAsync();
         if (entities != null)
         {
             var projects = entities.Select(ProjectFactory.Create);
@@ -42,27 +38,55 @@ public class ProjectServices(IProjectRepository projectRepository) : IProjectSer
         else
             return [];
     }
-
-    public async Task <Project> GetProjectByIdAsync(int id)
+    public async Task<IEnumerable<Project>> GetProjectsByUserId(int userId)
     {
-        var entitiy = await _projectRepository.GetAsync(x => x.Id == id);
-        if (entitiy != null)
+        // Get entites from db
+        var entities = await _projectRepository.GetAllAsync(x => x.CustomerId == userId);
+        if (entities != null)
         {
-            var projects = ProjectFactory.Create(entitiy);
+            // Remap to models
+            var projects = entities.Select(ProjectFactory.Create); ;
             return projects;
         }
         else
             return null!;
     }
-    //public async Task<IEnumerable<Project>> GetProjectsByCustomerAsync(int customerId)
-    //{
-    //    var entitiy = await _projectRepository.GetAsync(x => x.CustomerId == customerId);
-    //    if (entitiy != null)
-    //    {
-    //        var projects = ProjectFactory.Create(entitiy);
-    //        return projects;
-    //    }
-    //    else
-    //        return null!;
-    //}
+
+    public async Task <Project> GetProjectByIdAsync(int id)
+    {
+        // Get entity from db
+        var entitiy = await _projectRepository.GetProjectAsync(x => x.Id == id);
+        if (entitiy != null)
+        {
+            // Remap to model
+            var project = ProjectFactory.Create(entitiy);
+            return project;
+        }
+        else
+            return null!;
+    }
+    // Update
+    public async Task<Project> UpdateProject(Project project)
+    {
+        // Get entity from db
+        var entitiy = await _projectRepository.GetAsync(x => x.Id == project.Id);
+        if (entitiy == null)
+            return null! ;
+
+        // Remap from project to entity
+        ProjectEntity x = ProjectFactory.UpdateEntity(project, entitiy);
+        // Update in db
+        var result = await _projectRepository.UpdateAsync(e => e.Id == x.Id, x);
+        if (result == null)
+            return null!;
+
+        return ProjectFactory.Create(result);
+    }
+
+    // Delete
+    public async Task<bool> RemoveProject(Project project)
+    {
+        var result = await _projectRepository.DeleteAsync(x => x.Id == project.Id);
+        return result;
+    }
 }

@@ -1,5 +1,4 @@
-﻿using Data.Entities;
-using Data.Interfaces;
+﻿using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Linq.Expressions;
@@ -19,16 +18,15 @@ public class BaseRepository<TEntity>(DataContext context) : IBaseRepository<TEnt
 
         try
         {
-            // Lägg till i stageing del
+            // Store in staging memory
             await _dbSet.AddAsync(entity);
-            // Spara till db
+            // Save to DB
             await _context.SaveChangesAsync();
-            // Returera updaterad entity med auto incriment ID
+            // Return entity with updated values
             return entity;
         }
-        catch (Exception ex)
+        catch
         {
-            Debug.WriteLine($"ERROR CREATING {nameof(TEntity)} ENTITY :: {ex.Message}");
             return null!;
         }
     }
@@ -37,19 +35,40 @@ public class BaseRepository<TEntity>(DataContext context) : IBaseRepository<TEnt
     // Read
     public async Task<IEnumerable<TEntity>> GetAllAsync()
     {
-        return await _dbSet.ToListAsync();
+        try
+        {
+            // Get all values and return as list
+            return await _dbSet.ToListAsync();
+        }
+        catch { 
+            return null!;
+        }
     }
+
     public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> expression)
     {
         if (expression == null)
             return null!;
-
-        Debug.WriteLine($"GetAsync. Returning {nameof(TEntity)}");
-        return await _dbSet.FirstOrDefaultAsync(expression) ?? null!;
+        // Get the first result from db that matches the expression
+        var result = await _dbSet.FirstOrDefaultAsync(expression);
+        if(result != null)
+        {
+            return result;
+        }
+        return null!;
     }
-    public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> expression)
+
+    public async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> expression)
     {
-        return await _dbSet.AnyAsync(expression);
+        if (expression == null)
+            return null!;
+        // Get the all results from db that matches in expression
+        var result = await _dbSet.Where(expression).ToListAsync();
+        if (result != null)
+        {
+            return result;
+        }
+        return null!;
     }
 
     // Update
@@ -59,20 +78,20 @@ public class BaseRepository<TEntity>(DataContext context) : IBaseRepository<TEnt
             return null!;
         try
         {
-            // Sök upp data
+            // Get matching entity from db
             var existingProductEntity = await _dbSet.FirstOrDefaultAsync(expression);
             if (existingProductEntity == null)
                 return null!;
 
-            // Uppdatera med dom nya värderna.
+            // Update with the new values
             _context.Entry(existingProductEntity).CurrentValues.SetValues(updatedEntity);
+            // Save updated entity to db
             await _context.SaveChangesAsync();
 
             return updatedEntity;
         }
-        catch (Exception ex)
+        catch
         {
-            Debug.WriteLine($"ERROR Updating {nameof(TEntity)} ENTITY :: {ex.Message}");
             return null!;
         }
     }
@@ -86,18 +105,19 @@ public class BaseRepository<TEntity>(DataContext context) : IBaseRepository<TEnt
 
         try
         {
+            // Find the first result from db based on expression
             var existingProductEntity = await _dbSet.FirstOrDefaultAsync(expression) ?? null!;
             if (existingProductEntity == null)
                 return false;
 
+            // Remove from db
             _dbSet.Remove(existingProductEntity);
             await _context.SaveChangesAsync();
 
             return true;
         }
-        catch (Exception ex)
+        catch
         {
-            Debug.WriteLine("ERROR DELETING PRODUCT ENTITY :: " + ex.Message);
             return false;
         }
     }

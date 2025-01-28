@@ -1,15 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Data.Entities
+namespace Data.Entities;
+public class ServiceEntity
 {
-    public class ServiceEntity
-    {
-        [Key]
-        public int Id { get; set; }
-        public string ServiceName { get; set; } = null!;
+    [Key]
+    public int Id { get; set; }
+    public string ServiceName { get; set; } = null!;
 
-        [Column(TypeName = "money")]
-        public decimal Price { get; set; }
-    }
+    [Column(TypeName = "money")]
+    public decimal Price { get; set; }
 }

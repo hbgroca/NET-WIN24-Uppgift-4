@@ -1,0 +1,33 @@
+﻿<div class="project-card-container" @onclick="()=>NavigateTo(project.Id)">
+    <h4>@project.Name</h4>
+    <div class="info-wrapper">
+        <h6>Manager: <p>@project.Manager.FirstName @project.Manager.LastName</p></h6>
+        <h6>Customer: <p>@project.Customer.FirstName @project.Customer.LastName</p></h6>
+
+        <div class="date-wrapper">
+            <div>
+                <h6>Start date</h6>
+                <p>@project.StartDate</p>
+            </div>
+            <div>
+                <h6>End date</h6>
+                <p>@project.EndDate</p>
+            </div>
+        </div>
+        <div class="description-wrapper">
+            <h6>Description</h6>
+            <p>@project.Description</p>
+        </div>
+    </div>
+</div>
+
+@code {
+    // Props
+    [Parameter]
+    public Project project { get; set; }
+
+    private void NavigateTo(int projectId)
+    {
+        NavigationManager.NavigateTo($"/projectview/{projectId}");
+    }
+}

@@ -1,0 +1,33 @@
+.project-card-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
+  padding: 1em 1.5em;
+  border-radius: 0.5em;
+  background-color: white;
+  width: Clamp(200px, 25%, 400px);
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+  transition: 0.3s;
+  cursor: pointer;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+}
+.info-wrapper{
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 0.5em;
+}
+.date-wrapper{
+  display: flex;
+  gap: 1em;
+  align-items: center;
+  padding-block: 0.5em;
+  margin: auto;
+}
+.description-wrapper{
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  align-items: center;
+}

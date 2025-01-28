@@ -1,0 +1,148 @@
+﻿@page "/services"
+
+<div class=@(addUserMenuOpened ? "hidden" : "top-bar")>
+    <div class="top-bar-adduser-text" @onclick="()=>{addUserMenuOpened = !addUserMenuOpened;}">
+        <h6>Add service </h6><h2>&#43;</h2>
+    </div>
+</div>
+<div class=@(addUserMenuOpened ? "top-bar add-user" : "hidden")>
+    <div class="top-bar-label">
+        <h5>Add service</h5>
+        <button type="button" @onclick="()=>{addUserMenuOpened = !addUserMenuOpened;}">Cancel</button>
+    </div>
+
+    <div class="add-user-input-container">
+        <div >
+            <div class="add-user-input-field">
+                <p>Service description <span>(required)</span></p>
+                <InputText @bind-Value="_registrationForm.Name" typeof="text" placeholder="Service description..." />
+            </div>
+            <div class="add-user-input-field">
+                <p>Cost per hour <span>(required)</span></p>
+                <InputNumber @bind-Value="_registrationForm.PricePerHour" placeholder="Cost..." />
+            </div>
+        </div>
+
+        <button type="button" @onclick="SubmitInputs">Add service</button>
+    </div>
+</div>
+
+<div class="customer-list-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Service</th>
+                <th>Cost</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Service service in _servicelist)
+            {
+                @if (editModeEnabled && selectedService == service)
+                {
+                    <td>@service.Id</td>
+                    <td><InputText @bind-Value="@service.Name" typeof="text" placeholder="Service...." /></td>
+                    <td><InputNumber @bind-Value="@service.PricePerHour" typeof="text" placeholder="Cost..." /></td>
+                    <td>
+                        @if (!deleteConfirmEnabled)
+                        {
+                        <button @onclick="async ()=>{await SaveUpdatedToDb(service);}">Save</button>
+                            <button @onclick="async ()=>{await UpdateCustomerList();}">Cancel</button>
+                            <button @onclick="()=>{deleteConfirmEnabled = true;}">Remove</button>
+                        }
+                        else
+                        {
+                            <p>Confirm delete</p>
+                        <button @onclick="async ()=>{await RemoveCustomer(service);}">Remove</button>
+                            <button @onclick="()=>{deleteConfirmEnabled = false;}">Cancel</button>
+                        }
+                    </td>
+                }
+                else
+                {
+                    <tr class="hover-darken">
+                        <td @onclick="()=>{ToogleSelectedCustomer(service);}">@service.Id</td>
+                        <td @onclick="()=>{ToogleSelectedCustomer(service);}">@service.Name</td>
+                    <td @onclick="()=>{ToogleSelectedCustomer(service);}">@decimal.Round(service.PricePerHour,2)$</td>
+                        <td><button @onclick="()=>{editModeEnabled = true; selectedService = service;}">Modify</button></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private ServiceRegistrationForm _registrationForm = new();
+    private List<Service> _servicelist = [];
+    private bool addUserMenuOpened = false;
+    private bool editModeEnabled = false;
+    private bool deleteConfirmEnabled = false;
+    private Service selectedService = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateCustomerList();
+    }
+
+    private void ToogleSelectedCustomer(Service service)
+    {
+        if (selectedService == service)
+        {
+            service = null!;
+        }
+        else
+            selectedService = service;
+    }
+
+    private async Task UpdateCustomerList()
+    {
+        deleteConfirmEnabled = false;
+        editModeEnabled = false;
+        selectedService = null!;
+        var services = await _serviceService.GetAllAsync();
+        _servicelist = services.ToList();
+    }
+
+    private async Task SubmitInputs()
+    {
+        if (string.IsNullOrWhiteSpace(_registrationForm.Name))
+            return;
+
+        var result = await _serviceService.CreateAsync(_registrationForm);
+        if (result != null)
+        {
+            UserAdded();
+            await UpdateCustomerList();
+        }
+    }
+
+    private void UserAdded()
+    {
+        _registrationForm = new();
+        addUserMenuOpened = false;
+    }
+
+    private async Task SaveUpdatedToDb(Service service)
+    {
+        await _serviceService.Update(service);
+        await UpdateCustomerList();
+        editModeEnabled = false;
+        selectedService = null!;
+    }
+
+    private async Task RemoveCustomer(Service service)
+    {
+        await _serviceService.Delete(service);
+        editModeEnabled = false;
+        selectedService = null!;
+        await UpdateCustomerList();
+    }
+
+    private void NavigateToProject(int projectId)
+    {
+        NavigationManager.NavigateTo($"/projectview/{projectId}");
+    }
+}

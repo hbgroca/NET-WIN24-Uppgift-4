@@ -7,6 +7,7 @@
 @using Microsoft.JSInterop
 @using Presentation_MAUI_BLAZOR
 @using Presentation_MAUI_BLAZOR.Components
+@using Presentation_MAUI_BLAZOR.Components.Cards
 
 @using Business.Dtos
 @using Business.Services
@@ -16,9 +17,9 @@
 @using Data.Interfaces
 @using Data.Entities
 
-@inject ICustomerRepository _customerRepository
-@inject IProjectRepository _projectRepository
-@inject IServiceRepositrory _serviceRepository
-
+@inject NavigationManager NavigationManager
 @inject ICustomerServices _customerService
+@inject IEmployeeServices _employeeService
 @inject IProjectServices _projectService
+@inject IStatusServices _statusService
+@inject IServicesService _serviceService

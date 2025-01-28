@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250126203842_Created Tables")]
-    partial class CreatedTables
+    [Migration("20250128160210_Tables Created")]
+    partial class TablesCreated
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,7 +78,6 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -92,7 +91,7 @@ namespace Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 100L);
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
@@ -100,17 +99,23 @@ namespace Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<int>("ManagerId")
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("int");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("ProjectName")
                         .IsRequired()
                         .HasColumnType("nvarchar(125)");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<decimal>("ServiceCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
                     b.Property<int>("StatusId")
@@ -120,7 +125,9 @@ namespace Data.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("ManagerId");
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("ServiceId");
 
                     b.HasIndex("StatusId");
 
@@ -138,21 +145,16 @@ namespace Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("money");
 
-                    b.Property<int?>("ProjectEntityId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ServiceName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectEntityId");
-
                     b.ToTable("Services");
                 });
 
-            modelBuilder.Entity("Data.Entities.StatusTypeEntity", b =>
+            modelBuilder.Entity("Data.Entities.StatusEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -177,13 +179,19 @@ namespace Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Data.Entities.EmployeeEntity", "Manager")
+                    b.HasOne("Data.Entities.EmployeeEntity", "Employee")
                         .WithMany()
-                        .HasForeignKey("ManagerId")
+                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Data.Entities.StatusTypeEntity", "Status")
+                    b.HasOne("Data.Entities.ServiceEntity", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Entities.StatusEntity", "Status")
                         .WithMany()
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -191,21 +199,11 @@ namespace Data.Migrations
 
                     b.Navigation("Customer");
 
-                    b.Navigation("Manager");
+                    b.Navigation("Employee");
+
+                    b.Navigation("Service");
 
                     b.Navigation("Status");
-                });
-
-            modelBuilder.Entity("Data.Entities.ServiceEntity", b =>
-                {
-                    b.HasOne("Data.Entities.ProjectEntity", null)
-                        .WithMany("Services")
-                        .HasForeignKey("ProjectEntityId");
-                });
-
-            modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
-                {
-                    b.Navigation("Services");
                 });
 #pragma warning restore 612, 618
         }

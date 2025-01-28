@@ -3,10 +3,10 @@ using Data.Interfaces;
 
 namespace Data.Repositories;
 
-public class ServiceRepository : BaseRepository<ServiceEntity>, IServiceRepositrory
+public class EmployeeRepository : BaseRepository<EmployeeEntity>, IEmployeeRepository
 {
     private readonly DataContext _context;
-    public ServiceRepository(DataContext context) : base(context)
+    public EmployeeRepository(DataContext context) : base(context)
     {
         _context = context;
     }

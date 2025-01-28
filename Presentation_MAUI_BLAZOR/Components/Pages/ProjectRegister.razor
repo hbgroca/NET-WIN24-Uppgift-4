@@ -1,0 +1,161 @@
+﻿@page "/projects/register"
+
+<div class="top-bar" @onclick="NavigateToProject">
+    <div class="top-bar-goback-text">
+        <h6>Go back</h6><h2>&#8617;</h2>
+    </div>
+</div>
+
+<div class="outer-wrapper">
+    <div class="card-container">
+        <div class="card-input-wrapper">
+            <p>Project Name</p>
+            <InputText class="w-100" @bind-Value="@_registrationForm.Name" typeof="text"/>
+        </div>
+
+        <div class="card-input-wrapper-sbs">
+            <div class="card-input-wrapper">
+                <p>Start Date</p>
+                <InputDate class="w-100" @bind-Value="@_registrationForm.StartDate"/>
+            </div>
+            <div class="card-input-wrapper">
+                <p>End Date</p>
+                <InputDate class="w-100" @bind-Value="_registrationForm.EndDate"/>
+            </div>
+        </div>
+
+        <div>
+            <p>Project Manager</p>
+            <div class="card-input-wrapper-sbs">
+                <InputSelect class="w-100" @bind-Value="@selectedEmployee" TValue="int">
+                    @foreach (var employee in employees)
+                    {
+                        <option value="@employee.Id">@employee.FirstName @employee.LastName</option>
+                    }
+                </InputSelect>
+                <p class="card-input-add-btn">+</p>
+            </div>
+        </div>
+
+        <div>
+            <p>Customer</p>
+            <div class="card-input-wrapper-sbs">
+                <InputSelect class="w-100" @bind-Value="@selectedCustomer" TValue="int">
+                    @foreach (var customer in customers)
+                    {
+                        @if (string.IsNullOrWhiteSpace(customer.CompanyName))
+                        {
+                            <option value="@customer.Id">@customer.FirstName @customer.LastName</option>
+                        }
+                        else
+                        {
+                            <option value="@customer.Id">@customer.CompanyName</option>
+                        }
+                    }
+                </InputSelect>
+                <p class="card-input-add-btn">+</p>
+            </div>
+        </div>
+
+        <div class="card-input-wrapper-sbs">
+            <div>
+                <p>Service</p>
+                <div class="card-input-wrapper-sbs">
+                    <InputSelect class="w-100" @bind-Value="@selectedService" TValue="int">
+                        @foreach (var service in services)
+                        {
+                            <option value="@service.Id">@service.Name (@decimal.Round(service.PricePerHour, 2) $/h)</option>
+                        }
+                    </InputSelect>
+                    <p class="card-input-add-btn">+</p>
+                </div>
+            </div>
+            <div class="card-input-number-cost-wrapper">
+                <p>Total cost</p>
+                <div>
+                    <InputNumber class="card-input-number-cost" @bind-Value="@_registrationForm.ServiceCost" />
+                    <p>$</p>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <p>Status</p>
+            <div>
+                <InputSelect class="w-100" @bind-Value="@selectedStatus" TValue="int">
+                    @foreach (var status in statuses)
+                    {
+                        <option value="@status.Id">@status.StatusDescription</option>
+                    }
+                </InputSelect>
+            </div>
+        </div>
+
+        <div>
+            <p>Description</p>
+            <div>
+                <InputTextArea class="w-100" @bind-Value="@_registrationForm.Description" />
+            </div>
+        </div>
+
+        <button class="card-input-submit-btn" @onclick="async ()=> await AddProjectToDb()">Add Project</button>
+    </div>
+</div>
+
+@code {
+    ProjectRegistrationForm _registrationForm = new();
+    IEnumerable<Employee> employees = [];
+    public int selectedEmployee = 1;
+    public int selectedCustomer = 1;
+    public int selectedStatus = 1;
+    public int selectedService = 1;
+    IEnumerable<Customer> customers = [];
+    IEnumerable<Service> services = [];
+    IEnumerable<Status> statuses = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateLists();
+    }
+
+    private async Task UpdateLists()
+    {
+        // Get all data from db
+        services = await _serviceService.GetAllAsync();
+        statuses = await _statusService.GetAllAsync();
+        customers = await _customerService.GetAllAsync();
+        employees = await _employeeService.GetAllAsync();
+
+        // Set default index values for select elements
+        if(services.Any())
+            selectedService = services.Last().Id;
+        if (statuses.Any())
+            selectedStatus = statuses.Last().Id;
+        if (customers.Any())
+            selectedCustomer = customers.Last().Id;
+        if (employees.Any())
+            selectedEmployee = employees.Last().Id;
+    }
+
+    private async Task AddProjectToDb()
+    {
+        // Set selected values to registration form
+        _registrationForm.ManagerId = selectedEmployee;
+        _registrationForm.ServiceId = selectedService;
+        _registrationForm.CustomerId = selectedCustomer;
+        _registrationForm.StatusId = selectedStatus;
+
+        // Add project to db
+        var result = await _projectService.Create(_registrationForm);
+        if (result != null)
+        {
+            NavigateToProject();
+        }
+    }
+
+    private void NavigateToProject()
+    {
+        _registrationForm = new();
+        NavigationManager.NavigateTo($"/projects");
+    }
+}

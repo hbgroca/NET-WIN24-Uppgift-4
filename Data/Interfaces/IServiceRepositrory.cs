@@ -1,8 +1,6 @@
 ﻿using Data.Entities;
 
-namespace Data.Interfaces
+namespace Data.Interfaces;
+public interface IServiceRepositrory : IBaseRepository<ServiceEntity>
 {
-    public interface IServiceRepositrory : IBaseRepository<ServiceEntity>
-    {
-    }
 }

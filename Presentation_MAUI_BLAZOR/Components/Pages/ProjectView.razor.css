@@ -1,0 +1,59 @@
+.top-bar{
+  background-color: #333;
+  color: white;
+  height: 56px;
+  padding-right: 8px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5em;
+}
+.top-bar-goback-text{
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  cursor: pointer ;
+  &:hover{
+    transition: 0.3s;
+    color: wheat;
+  }
+}
+.project-view-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  gap: 6em;
+  padding: 2rem 3rem;
+  background-color: rgba(255, 255, 255, 0.15);
+
+  h6, h4{
+    color: black;
+    font-weight: 600;
+  }
+}
+
+.project-view-lines{
+  display: flex;
+  flex-direction: column;
+
+  gap: 1em;
+}
+.right-lines{
+  margin-top: 2rem;
+}
+.project-view-edit{
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  span{
+    cursor: pointer;
+    color: darkslategrey;
+    transition: all .3s;
+    &:hover{
+      color: wheat;
+      scale: 1.1;
+      font-weight: 600;
+    }
+  }
+}
+

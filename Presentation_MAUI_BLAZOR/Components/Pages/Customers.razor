@@ -58,25 +58,67 @@
                 <th>Last name</th>
                 <th>Email</th>
                 <th>Phone</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             @foreach (Customer customer in _customerlist)
             {
-                <tr class="hover-darken" @onclick="()=>{if(selectedCustomer == customer){selectedCustomer=null!;}else{selectedCustomer = customer;};}">
-                    <td>@customer.Id</td>
-                    <td>@customer.OrganisationNumber</td>
-                    <td>@customer.CompanyName</td>
-                    <td>@customer.FirstName</td>
-                    <td>@customer.LastName</td>
-                    <td>@customer.Email</td>
-                    <td>@customer.Phone</td>
-                </tr>
-                @if(selectedCustomer == customer)
+                @if (editModeEnabled && selectedCustomer == customer)
                 {
-                    <div>
-                        <p>List of projects ordered by @customer.FirstName</p>
-                    </div>
+                    <td>@customer.Id</td>
+                    <td><InputText @bind-Value="@customer.OrganisationNumber" typeof="text" placeholder="Organisation Nr" /></td>
+                    <td><InputText @bind-Value="@customer.CompanyName" typeof="text" placeholder="Company name" /></td>
+                    <td><InputText @bind-Value="@customer.FirstName" typeof="text" placeholder="First name" /></td>
+                    <td><InputText @bind-Value="@customer.LastName" typeof="text" placeholder="Last name" /></td>
+                    <td><InputText @bind-Value="@customer.Email" typeof="text" placeholder="Email adress" /></td>
+                    <td><InputText @bind-Value="@customer.Phone" typeof="text" placeholder="Phone number" /></td>
+                    <td>
+                        @if (!deleteConfirmEnabled)
+                        {
+                            <button @onclick="async ()=>{await SaveUpdatedToDb(customer);}">Save</button>
+                            <button @onclick="async ()=>{await UpdateCustomerList();}">Cancel</button>
+                            <button @onclick="()=>{deleteConfirmEnabled = true;}">Remove</button>
+                        }
+                        else
+                        {
+                            <p>Confirm delete</p>
+                            <button @onclick="async ()=>{await RemoveCustomer(customer);}">Remove</button>
+                            <button @onclick="()=>{deleteConfirmEnabled = false;}">Cancel</button>
+                        }
+                    </td>
+                }
+                else
+                {
+                    <tr class="hover-darken">
+                        <td @onclick="async ()=>{await ToogleSelectedCustomer(customer);}">@customer.Id</td>
+                        <td @onclick="async ()=>{await ToogleSelectedCustomer(customer);}">@customer.OrganisationNumber</td>
+                        <td @onclick="async ()=>{await ToogleSelectedCustomer(customer);}">@customer.CompanyName</td>
+                        <td @onclick="async ()=>{await ToogleSelectedCustomer(customer);}">@customer.FirstName</td>
+                        <td @onclick="async ()=>{await ToogleSelectedCustomer(customer);}">@customer.LastName</td>
+                        <td @onclick="async ()=>{await ToogleSelectedCustomer(customer);}">@customer.Email</td>
+                        <td @onclick="async ()=>{await ToogleSelectedCustomer(customer);}">@customer.Phone</td>
+                        <td><button @onclick="()=>{editModeEnabled = true; selectedCustomer = customer;}">Modify</button></td>
+                    </tr>
+                    @if(selectedCustomer == customer)
+                    {
+                        <div class="customers-projects-wrapper">
+                            <h6>Connected projects</h6>
+                            @if(_customerProjectList.Count == 0)
+                            {
+                                <p class="customers-projects">No active projects</p>
+                            }
+                            else
+                            {
+                                @foreach (var project in _customerProjectList)
+                                {
+                                <div>
+                                    <p class="customers-projects" @onclick="()=>{NavigateToProject(project.Id);}">(P-@project.Id) @project.Name</p>
+                                </div>
+                                }
+                            }
+                        </div>
+                    }
                 }
             }
         </tbody>
@@ -86,11 +128,37 @@
 @code {
     private CustomerRegistrationForm _registrationForm = new();
     private List<Customer> _customerlist = [];
+    private List<Project> _customerProjectList = [];
     private bool addUserMenuOpened = false;
+    private bool editModeEnabled = false;
+    private bool deleteConfirmEnabled = false;
     private Customer selectedCustomer = null!;
 
     protected override async Task OnInitializedAsync()
     {
+        await UpdateCustomerList();
+    }
+
+    private async Task ToogleSelectedCustomer(Customer customer)
+    {
+        if (selectedCustomer == customer)
+        {
+            selectedCustomer = null!;
+        }
+        else
+        {
+            var projects = await _projectService.GetProjectsByUserId(customer.Id);
+            _customerProjectList = projects.ToList();
+            selectedCustomer = customer;
+        }
+    }
+
+    private async Task UpdateCustomerList()
+    {
+        // Reset all values
+        deleteConfirmEnabled = false;
+        editModeEnabled = false;
+        selectedCustomer = null!;
         var x = await _customerService.GetAllAsync();
         _customerlist = x.ToList();
     }
@@ -107,13 +175,38 @@
         _registrationForm.Email = _registrationForm.Email.ToLower();
 
         var result = await _customerService.CreateAsync(_registrationForm);
-        if (result)
+        if (result != null)
+        {
             UserAdded();
+            await UpdateCustomerList();
+        }
+
     }
 
     private void UserAdded()
     {
         _registrationForm = new();
         addUserMenuOpened = false;
+    }
+
+    private async Task SaveUpdatedToDb(Customer entity)
+    {
+        await _customerService.Update(entity);
+        await UpdateCustomerList();
+        editModeEnabled = false;
+        selectedCustomer = null!;
+    }
+
+    private async Task RemoveCustomer(Customer customer)
+    {
+        await _customerService.Delete(customer);
+        editModeEnabled = false;
+        selectedCustomer = null!;
+        await UpdateCustomerList();
+    }
+
+    private void NavigateToProject(int projectId)
+    {
+        NavigationManager.NavigateTo($"/projectview/{projectId}");
     }
 }

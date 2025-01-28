@@ -1,5 +1,89 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+<div class="home-container">
+  @if(projectsCount > 0){
+    <h4>Projects In Progress</h4>
+    <div class="projects-container">
+      @foreach (var project in projects)
+      {
+          if (project.Status.StatusDescription == "In Progress")
+          {
+              <ProjectCard Project="project"/>
+          }
+      }
+    </div>
 
-Welcome to your new app.
+    <h4>Projects Not Started</h4>
+    <div class="projects-container">
+      @foreach (var project in projects)
+      {
+          if(project.Status.StatusDescription == "Not Started")
+          {
+              <ProjectCard Project="project"/>
+          }
+      }
+    </div>
+
+    <h4>Projects Finished</h4>
+    <div class="projects-container">
+      @foreach (var project in projects)
+      {
+                if (project.Status.StatusDescription == "Finished")
+          {
+              <ProjectCard Project="project"/>
+          }
+      }
+    </div>
+  }
+  else
+  {
+    <p>No projects found</p>
+  }
+</div>
+
+@code {
+    IEnumerable<Project> projects = new List<Project>();
+    private int employeesCount;
+    private int customersCount;
+    private int servicesCount;
+    private int projectsCount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check statuses in db otherwise add them
+        var x = await _statusService.GetAllAsync();
+        if(x.Count() == 0)
+        {
+            // Add the (Not Started, Finished and In Progress) to db
+            await _statusService.CreateDefaultAsync();
+        }
+
+        // Update the counts
+        employeesCount = await UpdateEmployeeList();
+        servicesCount = await UpdateServicesList();
+        customersCount = await UpdateCustomerList();
+        projectsCount = await UpdateProjectList();
+    }
+
+    // Update the counts
+    private async Task<int> UpdateCustomerList()
+    {
+        var x = await _customerService.GetAllAsync();
+        return x.Count();
+    }
+    private async Task<int> UpdateServicesList()
+    {
+        var x = await _serviceService.GetAllAsync();
+        return x.Count();
+    }
+    private async Task<int> UpdateEmployeeList()
+    {
+        var x = await _employeeService.GetAllAsync();
+        return x.Count();
+    }
+    private async Task<int> UpdateProjectList()
+    {
+        projects = await _projectService.GetAllProjectsAsync();
+        return projects.Count();
+    }
+}

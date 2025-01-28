@@ -1,0 +1,255 @@
+﻿@page "/projectview/{Id:int}"
+@* CoPilot helped me out with the back to previus page, could't figure it out on my own. *@
+@inject IJSRuntime JSRuntime
+
+<div class="top-bar">
+    <div class="top-bar-goback-text" @onclick="async ()=>{await NavigateBack();}">
+        <h6>Go back</h6><h2>&#8617;</h2>
+    </div>
+</div>
+@if(_project != null)
+{
+    @if (!editModeEnabled)
+    {
+        <div class="project-view-container">
+            <div class="project-view-lines">
+
+                <div>
+                    <div class="project-view-edit">
+                        <h4>P-@_project.Id</h4>
+                        <span @onclick="()=>{editModeEnabled = !editModeEnabled;}">edit</span>
+                    </div>
+                    <h6>Project name</h6>
+                    <p>@_project.Name</p>
+                </div>
+
+                <div>
+                    <h6>Manager</h6>
+                    <div class="px-4">
+                        <div class="d-flex gap-1">
+                            <p>@_project.Manager.FirstName</p>
+                            <p>@_project.Manager.LastName</p>
+                        </div>
+                        <p>&#9743; @_project.Manager.Email</p>
+                        <p>&#9993; @_project.Manager.Phone</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h6>Customer</h6>
+                    <div class="px-4">
+                        @if (!string.IsNullOrEmpty(_project.Customer.CompanyName))
+                        {
+                            <p>@_project.Customer.CompanyName</p>
+                        }
+                        @if (!string.IsNullOrEmpty(_project.Customer.OrganisationNumber))
+                        {
+                            <p>@_project.Customer.OrganisationNumber</p>
+                        }
+
+                        <div class="d-flex gap-1">
+                            <p>@_project.Customer.FirstName</p>
+                            <p>@_project.Customer.LastName</p>
+                        </div>
+
+                        <p>&#9993; @_project.Customer.Email</p>
+                        <p>&#9743; @_project.Customer.Phone</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-view-lines right-lines">
+                <div class="d-flex gap-5">
+                    <div>
+                        <h6>Start Date</h6>
+                        <p>@_project.StartDate.ToString()</p>
+                    </div>
+
+                    <div>
+                        <h6>End Date</h6>
+                        <p>@_project.EndDate.ToString()</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h6>Service</h6>
+                    <div class="d-flex gap-1">
+                        <p>@_project.Service.Name</p>
+                        <p>@decimal.Round(_project.Service.PricePerHour, 2)<span>$/hour</span></p>
+                    </div>
+                    <p>Total: @_project.ServiceCost<span>$</span></p>
+                </div>
+
+                <div>
+                    <h6>Status</h6>
+                    <p>@_project.Status.StatusDescription</p>
+                </div>
+
+                <div>
+                    <h6>Description</h6>
+                    <p>@_project.Description</p>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="project-view-container">
+            <div class="project-view-lines">
+
+                <div>
+                    <div class="project-view-edit">
+                        <h4>P-@_project.Id</h4>
+                        @if(!deleteConfirmOpened)
+                        {
+                            <span @onclick="async () => await SaveProject()">save</span>
+                            <span @onclick="()=>{deleteConfirmOpened = !deleteConfirmOpened;}">delete</span>
+                        }
+                        else
+                        {
+                            <p>Confirm delete</p>
+                            <span @onclick="()=>{deleteConfirmOpened = !deleteConfirmOpened;}">X</span>
+                            <span @onclick="async ()=> await RemoveProject()">&#10003;</span>
+                        }
+                    </div>
+                    <h6>Project name</h6>
+                    <InputText class="w-100" @bind-Value="_project.Name"/>
+                </div>
+
+                <div>
+                    <h6>Manager</h6>
+                    <div class="px-4">
+                        <InputSelect class="w-100" @bind-Value="@_project.ManagerId" TValue="int">
+                            @foreach (var employee in employees)
+                            {
+                                <option value="@employee.Id">@employee.FirstName @employee.LastName</option>
+                            }
+                        </InputSelect>
+                    </div>
+                </div>
+
+                <div>
+                    <h6>Customer</h6>
+                    <div class="px-4">
+                        <div class="card-input-wrapper-sbs">
+                            <InputSelect class="w-100" @bind-Value="@_project.CustomerId" TValue="int">
+                                @foreach (var customer in customers)
+                                {
+                                    @if (string.IsNullOrWhiteSpace(customer.CompanyName))
+                                    {
+                                        <option value="@customer.Id">@customer.FirstName @customer.LastName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@customer.Id">@customer.CompanyName</option>
+                                    }
+                                }
+                            </InputSelect>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-view-lines right-lines">
+                <div class="d-flex gap-5">
+                    <div>
+                        <h6>Start Date</h6>
+                        <InputDate class="w-100" @bind-Value="@_project.StartDate" />
+                    </div>
+
+                    <div>
+                        <h6>End Date</h6>
+                        <InputDate class="w-100" @bind-Value="_project.EndDate" />
+                    </div>
+                </div>
+
+                <div>
+                    <h6>Service</h6>
+                    <div class="d-flex gap-1">
+                        <InputSelect class="w-100" @bind-Value="@_project.ServicesId" TValue="int">
+                            @foreach (var service in services)
+                            {
+                                <option value="@service.Id">@service.Name (@decimal.Round(service.PricePerHour, 2) $/h)</option>
+                            }
+                        </InputSelect>
+                    </div>
+                    <div class="d-flex gap-1">
+                        <InputNumber class="w-25" @bind-Value="@_project.ServiceCost" />
+                        <p>$</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h6>Status</h6>
+                    <InputSelect class="w-100" @bind-Value="@_project.StatusId" TValue="int">
+                        @foreach (var status in statuses)
+                        {
+                            <option value="@status.Id">@status.StatusDescription</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <div>
+                    <h6>Description</h6>
+                    <InputTextArea class="w-100" @bind-Value="@_project.Description" />
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="loading">
+        <p>Collecting data</p>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    public bool editModeEnabled = false;
+    public bool deleteConfirmOpened = false;
+    private Project _project = null!;
+
+    IEnumerable<Employee> employees = [];
+    IEnumerable<Customer> customers = [];
+    IEnumerable<Service> services = [];
+    IEnumerable<Status> statuses = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _project = await _projectService.GetProjectByIdAsync(Id);
+        await UpdateLists();
+    }
+
+    private async Task UpdateLists()
+    {
+        employees = await _employeeService.GetAllAsync();
+        customers = await _customerService.GetAllAsync();
+        services = await _serviceService.GetAllAsync();
+        statuses = await _statusService.GetAllAsync();
+    }
+
+    private async Task SaveProject()
+    {
+        editModeEnabled = false;
+        Project result = await _projectService.UpdateProject(_project);
+        if (result != null)
+        {
+            _project = result;
+        }
+    }
+
+    private async Task RemoveProject()
+    {
+        await _projectService.RemoveProject(_project);
+        await NavigateBack();
+    }
+
+    private async Task NavigateBack()
+    {
+        // Pilot helped me out with the back to previus page, could't figure it out on my own. :(
+        await JSRuntime.InvokeVoidAsync("history.back");
+    }
+}

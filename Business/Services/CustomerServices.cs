@@ -1,5 +1,4 @@
-﻿
-using Business.Dtos;
+﻿using Business.Dtos;
 using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
@@ -12,7 +11,9 @@ public class CustomerServices(ICustomerRepository repository) : ICustomerService
 {
     private readonly ICustomerRepository _customerRepository = repository;
 
-    public async Task<bool> CreateAsync(CustomerRegistrationForm form)
+
+    // Create
+    public async Task<Customer> CreateAsync(CustomerRegistrationForm form)
     {
         // Remap
         CustomerEntity entity = CustomerFactory.Create(form);
@@ -21,18 +22,47 @@ public class CustomerServices(ICustomerRepository repository) : ICustomerService
         var result = await _customerRepository.CreateAsync(entity);
 
         if (result != null)
-            return true;
-        return false;
+            return CustomerFactory.Create(result);
+        return null!;
     }
 
+    // Read
     public async Task<IEnumerable<Customer>> GetAllAsync()
     {
         // Get customers from db
-        var customers = await _customerRepository.GetAllAsync();
+        var result = await _customerRepository.GetAllAsync();
 
-        // Remap
-        IEnumerable<Customer> customerList = customers.Select(CustomerFactory.Create).ToList();
+        if (result != null)
+        {
+            // Remap to customer model
+            var list = result.Select(CustomerFactory.Create);
+            return list;
+        }
 
-        return customerList;
+        return [];
+    }
+
+
+    // Update
+    public async Task<Customer> Update(Customer customer)
+    {
+        // Remap to customer entity
+        CustomerEntity entity = CustomerFactory.Create(customer);
+        // Update the customer in db
+        CustomerEntity result = await _customerRepository.UpdateAsync(x=>x.Id == entity.Id ,entity);
+        if(result != null)
+        {
+            // Remap to customer model
+            return CustomerFactory.Create(result);
+        }
+
+        return null!;
+    }
+
+
+    // Delete
+    public async Task<bool> Delete(Customer customer)
+    {
+        return await _customerRepository.DeleteAsync(x=>x.Id == customer.Id);
     }
 }

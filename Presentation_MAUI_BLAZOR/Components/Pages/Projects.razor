@@ -1,47 +1,77 @@
 ﻿@page "/projects"
 
-<h2>Projects</h2>
+<div class="top-bar">
+    <div class="top-bar-adduser-text" @onclick="NavigateToProjectRegister">
+        <h6>New project </h6><h2>&#43;</h2>
+    </div>
+</div>
 
-<InputNumber @bind-Value="projectId" typeof="number" placeholder="Project ID" />
-<button type="button" @onclick="()=>GetUsersById(projectId)">Collect By ID</button>
-
-<button type="button" @onclick="SubmitUserInputs">Collect All</button>
-
-@if (projects != null)
+@if(_projectList == null)
 {
-    foreach (var project in projects)
-    {
-        <p>(Id: @project.Id): @project.Name</p>
-        <p>(Manager: @project.Manager)</p>
-        <p>(Customer: @project.Customer)</p>
-        <p>(Services: @project.Services.Count();)</p>
-        foreach (var services in project.Services)
-        {
-            <p>@services.Name</p>
-        };
-    };
+    <div class="loading">
+        <p>Collecting data</p>
+    </div>
+}
+else
+{
+    <div class=@(addMenuOpened ? "hidden" : "customer-list-container")>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Project name</th>
+                    <th>Start time</th>
+                    <th>End time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Project project in _projectList)
+                {
+                    <tr class="hover-darken" @onclick="()=>NavigateToProjectView(project.Id)">
+                        <td>P-@project.Id</td>
+                        <td>@project.Name</td>
+                        <td>@project.StartDate</td>
+                        <td>@project.EndDate</td>
+                        @if (project.Status != null)
+                        {
+                            <td>@project.Status.StatusDescription</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 
 @code {
-    private int projectId = 1;
-    private IEnumerable<Project> projects = [];
+    private List<Project> _projectList = new();
+    public bool addMenuOpened = false;
 
-    private async Task SubmitUserInputs()
+    protected override async Task OnInitializedAsync()
     {
-        projects = await _projectService.GetAllProjectsAsync();
+        await InvokeAsync(UpdateList);
     }
 
-    private async Task GetUsersById(int id)
+    private async Task UpdateList()
     {
+        var projects = await _projectService.GetAllProjectsAsync();
+        _projectList = projects.ToList();
+    }
 
+    public async Task CreateNewProjectClicked()
+    {
+        await UpdateList();
+        addMenuOpened = false;
+    }
 
-        var project = await _projectService.GetProjectByIdAsync(id);
-        if (project != null)
-        {
-            projects = new List<Project>
-            {
-                project
-            };
-        }
+    private void NavigateToProjectView(int id)
+    {
+        NavigationManager.NavigateTo($"/projectview/{id}");
+    }
+
+    private void NavigateToProjectRegister()
+    {
+        NavigationManager.NavigateTo($"/projects/register");
     }
 }
