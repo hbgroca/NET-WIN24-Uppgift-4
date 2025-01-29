@@ -25,26 +25,26 @@ Här nedan specificeras vad som krävs för att uppnå godkänt respektive väl 
 ## FÖR GODKÄNT KRÄVS FÖLJANDE:
 
 Frontend-baserad applikation enligt specifikationen ovan med följande:
-- En sida som listar alla befintliga projekt.
-- En sida där man kan skapa ett nytt projekt.
-- En sida där man kan editera/uppdatera ett befintligt projekt.
+- En sida som listar alla befintliga projekt. &#10003;
+- En sida där man kan skapa ett nytt projekt. &#10003;
+- En sida där man kan editera/uppdatera ett befintligt projekt. &#10003;
 
 Ett klassbibliotek med följande:
-- Använda Entity Framework Core - Code First.
-- Använda valfri databaslösning av de som presenterats i kursen/uppgiften.
-- Använda minst två olika entiteter/tabeller (såsom kund och projekt).
-- Använda Services för att hantera projekt och kunder.
-- Använda Repositories för att hantera alla entiteter/tabeller.
-- Använda Dependency Injection.
-- Tillämpa S i SOLID (Single Responsibility Principle). (Övriga SOLID-principer är inte ett krav för godkänt.)
+- Använda Entity Framework Core - Code First. &#10003;
+- Använda valfri databaslösning av de som presenterats i kursen/uppgiften. &#10003;
+- Använda minst två olika entiteter/tabeller (såsom kund och projekt). &#10003;
+- Använda Services för att hantera projekt och kunder. &#10003;
+- Använda Repositories för att hantera alla entiteter/tabeller. &#10003;
+- Använda Dependency Injection. &#10003;
+- Tillämpa S i SOLID (Single Responsibility Principle). (Övriga SOLID-principer är inte ett krav för godkänt.) &#10003;
 
 ## FÖR VÄL GODKÄNT KRÄVS FÖLJANDE:
-- Frontend-baserad applikation enligt G-kraven.
+- Frontend-baserad applikation enligt G-kraven. &#10003;
 - Ett klassbibliotek enligt G-kraven med följande utökning:
-- Använda Repositories som baseras på en BaseClass (Generic).
-- Använda fler entiteter/tabeller (såsom kund, projektansvarig, projekt, tjänst etc.).
-- Använda Services för att hantera alla entiteter på ett lämpligt sätt, vilket innebär att man ska kunna hantera CRUD för kunder, projektansvarig, projekt etc.
-- Tillämpa SOLID-principer där det är lämpligt.
-- Tillämpa Factories.
-- Task ska tillämpas där det är lämpligt genom att använda asynkrona metoder och async/await, t.ex. vid databasoperationer.
+- Använda Repositories som baseras på en BaseClass (Generic). &#10003;
+- Använda fler entiteter/tabeller (såsom kund, projektansvarig, projekt, tjänst etc.). &#10003;
+- Använda Services för att hantera alla entiteter på ett lämpligt sätt, vilket innebär att man ska kunna hantera CRUD för kunder, projektansvarig, projekt etc. &#10003;
+- Tillämpa SOLID-principer där det är lämpligt. &#10003;
+- Tillämpa Factories. &#10003;
+- Task ska tillämpas där det är lämpligt genom att använda asynkrona metoder och async/await, t.ex. vid databasoperationer. &#10003;
 - Tillämpa Transaction Management för att hantera flera beroende operationer som en transaktion, inklusive rollback vid fel.
