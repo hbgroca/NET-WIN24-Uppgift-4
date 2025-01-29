@@ -3,11 +3,6 @@ using Data.Interfaces;
 
 namespace Data.Repositories;
 
-public class CustomerRepository : BaseRepository<CustomerEntity>, ICustomerRepository
+public class CustomerRepository(DataContext context) : BaseRepository<CustomerEntity>(context), ICustomerRepository
 {
-    private readonly DataContext _context;
-    public CustomerRepository(DataContext context) : base(context)
-    {
-        _context = context;
-    }
 }

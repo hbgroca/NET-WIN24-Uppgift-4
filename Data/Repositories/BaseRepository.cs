@@ -5,10 +5,10 @@ using System.Linq.Expressions;
 
 namespace Data.Repositories;
 
-public class BaseRepository<TEntity>(DataContext context) : IBaseRepository<TEntity> where TEntity : class
+public abstract class BaseRepository<TEntity>(DataContext context) : IBaseRepository<TEntity> where TEntity : class
 {
-    private readonly DataContext _context = context;
-    private readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
+    protected readonly DataContext _context = context;
+    protected readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
 
     // Create
     public async Task<TEntity> CreateAsync(TEntity entity)

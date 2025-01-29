@@ -4,22 +4,22 @@ using Data.Interfaces;
 using Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Business.Models;
+using System.Text.Json;
 
 namespace Presentation_MAUI_BLAZOR
 {
     public static class MauiProgram
     {
-        /* Installera dessa paket i DATAlagret
-         * install-package Microsoft.Entityframeworkcore.design
-         * install-package Microsoft.Entityframeworkcore.tools
-         * install-package Microsoft.Entityframeworkcore.sqlserver
-         * 
-         * Installera även Design paketet i presentationslagret
-         */
-
         public static MauiApp CreateMauiApp()
         {
+            JsonSerializerOptions options = new JsonSerializerOptions 
+            { 
+                // Clean up json file
+                WriteIndented = true,
+                // Prevent infinite loop when collecting db data where JOIN can cause trubble
+                ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles,
+            };
+
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
@@ -31,7 +31,6 @@ namespace Presentation_MAUI_BLAZOR
             builder.Services.AddMauiBlazorWebView();
 
             builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\HBGROCA\Desktop\Github\NET-WIN24-Uppgift-4\Data\Databases\LocalDB.mdf;Integrated Security=True;Connect Timeout=30;Encrypt=True"));
-            builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IStatusRepository, StatusRepository>();
             builder.Services.AddScoped<IProjectRepository, ProjectRepository>();

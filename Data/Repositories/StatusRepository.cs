@@ -3,12 +3,7 @@ using Data.Interfaces;
 
 namespace Data.Repositories
 {
-    public class StatusRepository : BaseRepository<StatusEntity>, IStatusRepository
+    public class StatusRepository(DataContext context) : BaseRepository<StatusEntity>(context), IStatusRepository
     {
-        private readonly DataContext _context;
-        public StatusRepository(DataContext context) : base(context)
-        {
-            _context = context;
-        }
     }
 }

@@ -5,14 +5,8 @@ using System.Linq.Expressions;
 
 namespace Data.Repositories;
 
-public class ProjectRepository : BaseRepository<ProjectEntity>, IProjectRepository
+public class ProjectRepository(DataContext context) : BaseRepository<ProjectEntity>(context), IProjectRepository
 {
-    private readonly DataContext _context;
-    public ProjectRepository(DataContext context) : base(context)
-    {
-        _context = context;
-    }
-
     public async Task<IEnumerable<ProjectEntity>> GetProjectsAsync()
     {
         return await _context.Projects
