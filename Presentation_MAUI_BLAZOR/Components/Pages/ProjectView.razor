@@ -20,7 +20,7 @@
                         <span @onclick="()=>{editModeEnabled = !editModeEnabled;}">edit</span>
                     </div>
                     <h6>Project name</h6>
-                    <p>@_project.Name</p>
+                    <p class="px-4">@_project.Name</p>
                 </div>
 
                 <div>
@@ -73,21 +73,21 @@
 
                 <div>
                     <h6>Service</h6>
-                    <div class="d-flex gap-1">
+                    <div class="px-4 d-flex gap-1">
                         <p>@_project.Service.Name</p>
-                        <p>@decimal.Round(_project.Service.PricePerHour, 2)<span>$/hour</span></p>
+                        <p>@decimal.Round(_project.Service.PricePerHour, 2)<span> $/hour</span></p>
                     </div>
-                    <p>Total: @_project.ServiceCost<span>$</span></p>
+                    <p class="px-4">Total cost: <span>$</span>@_project.ServiceCost</p>
                 </div>
 
                 <div>
                     <h6>Status</h6>
-                    <p>@_project.Status.StatusDescription</p>
+                    <p class="px-4">@_project.Status.StatusDescription</p>
                 </div>
 
                 <div>
                     <h6>Description</h6>
-                    <p>@_project.Description</p>
+                    <p class="px-4 description">@_project.Description</p>
                 </div>
             </div>
         </div>
@@ -118,7 +118,7 @@
 
                 <div>
                     <h6>Manager</h6>
-                    <div class="px-4">
+                    <div>
                         <InputSelect class="w-100" @bind-Value="@_project.ManagerId" TValue="int">
                             @foreach (var employee in employees)
                             {
@@ -130,8 +130,8 @@
 
                 <div>
                     <h6>Customer</h6>
-                    <div class="px-4">
-                        <div class="card-input-wrapper-sbs">
+                    <div >
+                        <div>
                             <InputSelect class="w-100" @bind-Value="@_project.CustomerId" TValue="int">
                                 @foreach (var customer in customers)
                                 {
@@ -163,7 +163,7 @@
                     </div>
                 </div>
 
-                <div>
+                <div class="service-edit-wrapper">
                     <h6>Service</h6>
                     <div class="d-flex gap-1">
                         <InputSelect class="w-100" @bind-Value="@_project.ServicesId" TValue="int">

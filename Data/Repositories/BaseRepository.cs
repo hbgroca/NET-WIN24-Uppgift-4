@@ -10,6 +10,10 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
     protected readonly DataContext _context = context;
     protected readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
 
+
+
+
+
     // Create
     public async Task<TEntity> CreateAsync(TEntity entity)
     {
@@ -19,7 +23,7 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
         try
         {
             // Store in staging memory
-            await _dbSet.AddAsync(entity);
+            await _context.AddAsync(entity);
             // Save to DB
             await _context.SaveChangesAsync();
             // Return entity with updated values
@@ -30,7 +34,6 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
             return null!;
         }
     }
-
 
     // Read
     public async Task<IEnumerable<TEntity>> GetAllAsync()

@@ -1,8 +1,16 @@
 ﻿<div class="project-card-container" @onclick="()=>NavigateTo(project.Id)">
-    <h4>@project.Name</h4>
+    <h4 class="project-header">@project.Name</h4>
     <div class="info-wrapper">
         <h6>Manager: <p>@project.Manager.FirstName @project.Manager.LastName</p></h6>
-        <h6>Customer: <p>@project.Customer.FirstName @project.Customer.LastName</p></h6>
+        @if (string.IsNullOrWhiteSpace(project.Customer.CompanyName))
+        {
+            <h6>Customer: <p>@project.Customer.FirstName @project.Customer.LastName</p></h6>
+        }
+        else
+        {
+            <h6>Customer: <p>@project.Customer.CompanyName</p></h6>
+        }
+        
 
         <div class="date-wrapper">
             <div>
@@ -14,10 +22,10 @@
                 <p>@project.EndDate</p>
             </div>
         </div>
-        <div class="description-wrapper">
-            <h6>Description</h6>
-            <p>@project.Description</p>
-        </div>
+        @* <div class="description-wrapper"> *@
+        @*     <h6>Description</h6> *@
+        @*     <p>@project.Description</p> *@
+        @* </div> *@
     </div>
 </div>
 

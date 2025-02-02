@@ -1,45 +1,48 @@
 ﻿@page "/"
-
-<div class="home-container">
-  @if(projectsCount > 0){
-    <h4>Projects In Progress</h4>
-    <div class="projects-container">
-      @foreach (var project in projects)
-      {
-          if (project.Status.StatusDescription == "In Progress")
+@if(projectsCount > 0){
+    <div class="home-container">
+  
+        <h4>Projects In Progress</h4>
+        <div class="projects-container">
+          @foreach (var project in projects)
           {
-              <ProjectCard Project="project"/>
+              if (project.Status.StatusDescription == "In Progress")
+              {
+                  <ProjectCard Project="project"/>
+              }
           }
-      }
-    </div>
+        </div>
 
-    <h4>Projects Not Started</h4>
-    <div class="projects-container">
-      @foreach (var project in projects)
-      {
-          if(project.Status.StatusDescription == "Not Started")
+        <h4>Projects Not Started</h4>
+        <div class="projects-container">
+          @foreach (var project in projects)
           {
-              <ProjectCard Project="project"/>
+              if(project.Status.StatusDescription == "Not Started")
+              {
+                  <ProjectCard Project="project"/>
+              }
           }
-      }
-    </div>
+        </div>
 
-    <h4>Projects Finished</h4>
-    <div class="projects-container">
-      @foreach (var project in projects)
-      {
-                if (project.Status.StatusDescription == "Finished")
+        <h4>Projects Finished</h4>
+        <div class="projects-container">
+          @foreach (var project in projects)
           {
-              <ProjectCard Project="project"/>
+              if (project.Status.StatusDescription == "Finished")
+              {
+                  <ProjectCard Project="project"/>
+              }
           }
-      }
+        </div>
     </div>
-  }
-  else
-  {
-    <p>No projects found</p>
-  }
-</div>
+}
+else
+{
+    <div class="nodata">
+        <p>There's no projects to show</p>
+        <button class="btn btn-dark" @onclick="()=>{NavigateToProjectRegister();}">Create Project</button>
+    </div>
+}
 
 @code {
     IEnumerable<Project> projects = new List<Project>();
@@ -85,5 +88,10 @@
     {
         projects = await _projectService.GetAllProjectsAsync();
         return projects.Count();
+    }
+
+    private void NavigateToProjectRegister()
+    {
+        NavigationManager.NavigateTo($"/projects/register");
     }
 }

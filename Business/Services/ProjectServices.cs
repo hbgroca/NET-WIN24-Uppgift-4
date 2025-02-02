@@ -38,6 +38,17 @@ public class ProjectServices(IProjectRepository projectRepository) : IProjectSer
         else
             return [];
     }
+
+
+
+
+
+
+
+
+
+
+
     public async Task<IEnumerable<Project>> GetProjectsByUserId(int userId)
     {
         // Get entites from db
@@ -51,6 +62,23 @@ public class ProjectServices(IProjectRepository projectRepository) : IProjectSer
         else
             return null!;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public async Task <Project> GetProjectByIdAsync(int id)
     {

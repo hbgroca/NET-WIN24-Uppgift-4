@@ -1,6 +1,7 @@
 ﻿@page "/projects/register"
+@inject IJSRuntime JSRuntime
 
-<div class="top-bar" @onclick="NavigateToProject">
+<div class="top-bar" @onclick="async ()=>{await NavigateBack();}">
     <div class="top-bar-goback-text">
         <h6>Go back</h6><h2>&#8617;</h2>
     </div>
@@ -157,5 +158,10 @@
     {
         _registrationForm = new();
         NavigationManager.NavigateTo($"/projects");
+    }
+
+    private async Task NavigateBack()
+    {
+        await JSRuntime.InvokeVoidAsync("history.back");
     }
 }

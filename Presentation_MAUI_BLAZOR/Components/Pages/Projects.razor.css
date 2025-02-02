@@ -15,54 +15,26 @@
     cursor: pointer ;
   }
 }
-.top-bar-label{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-.add-user{
-  height: fit-content;
-  padding: 1em 0.5em;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: start;
-}
 
-.add-user-input-container{
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  justify-content: space-between;
-  gap: 0.5em;
-}
-
-.add-user-input-field{
-  margin-top: 0.5em;
-}
-
-button{
-  padding: 0.5em 1em;
-  color: black;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 135px;
-  font-weight: semibold;
+.customer-list-container{
+  
+  th{
+    color: white;
+  }
+  td{
+    color: rgba(255, 255, 255, 0.75);
+  }
 }
 
 .hover-darken:hover{
   transition: 0.3s;
-  background-color: rgba(0, 0, 0, 0.1);
+  td{
+    color: rgba(255, 255, 255, 1);
+  }
+  background-color: rgba(255, 255, 255, 0.3);
   cursor: pointer;
 }
 
-.add-project-container{
-  margin-top: 3rem;
-  display: flex;
-  justify-content: center;
-}
 
 
 

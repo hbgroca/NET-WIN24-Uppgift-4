@@ -5,4 +5,5 @@ namespace Data.Repositories;
 
 public class EmployeeRepository(DataContext context) : BaseRepository<EmployeeEntity>(context), IEmployeeRepository
 {
+
 }

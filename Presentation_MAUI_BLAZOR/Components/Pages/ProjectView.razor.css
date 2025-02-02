@@ -15,19 +15,19 @@
   cursor: pointer ;
   &:hover{
     transition: 0.3s;
-    color: wheat;
+    color: rgba(255, 255, 255, 0.6);
   }
 }
 .project-view-container{
   display: flex;
   flex-direction: row;
-  justify-content: start;
+  justify-content: center;
   gap: 6em;
-  padding: 2rem 3rem;
+  padding: 3rem;
   background-color: rgba(255, 255, 255, 0.15);
 
   h6, h4{
-    color: black;
+    color: white;
     font-weight: 600;
   }
 }
@@ -37,6 +37,10 @@
   flex-direction: column;
 
   gap: 1em;
+  .description{
+    max-width: 300px;
+    text-wrap: wrap;
+  }
 }
 .right-lines{
   margin-top: 2rem;
@@ -45,15 +49,31 @@
   display: flex;
   gap: 1rem;
   align-items: center;
+  padding-bottom: 1rem;
   span{
     cursor: pointer;
-    color: darkslategrey;
+    color: rgb(50, 183, 236);
     transition: all .3s;
     &:hover{
       color: wheat;
       scale: 1.1;
       font-weight: 600;
     }
+  }
+  
+}
+.service-edit-wrapper{
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+div{
+  Input, Select, TextArea{
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem;
+    min-width: 100%;
+    
   }
 }
 

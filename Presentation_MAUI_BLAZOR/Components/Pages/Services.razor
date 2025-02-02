@@ -1,23 +1,23 @@
 ﻿@page "/services"
 
-<div class=@(addUserMenuOpened ? "hidden" : "top-bar")>
-    <div class="top-bar-adduser-text" @onclick="()=>{addUserMenuOpened = !addUserMenuOpened;}">
+<div class=@(addServiceMenuOpened ? "hidden" : "top-bar")>
+    <div class="top-bar-addservice-text" @onclick="()=>{addServiceMenuOpened = !addServiceMenuOpened;}">
         <h6>Add service </h6><h2>&#43;</h2>
     </div>
 </div>
-<div class=@(addUserMenuOpened ? "top-bar add-user" : "hidden")>
+<div class=@(addServiceMenuOpened ? "top-bar add-service" : "hidden")>
     <div class="top-bar-label">
         <h5>Add service</h5>
-        <button type="button" @onclick="()=>{addUserMenuOpened = !addUserMenuOpened;}">Cancel</button>
+        <button type="button" @onclick="()=>{addServiceMenuOpened = !addServiceMenuOpened;}">Cancel</button>
     </div>
 
-    <div class="add-user-input-container">
+    <div class="add-service-input-container">
         <div >
-            <div class="add-user-input-field">
+            <div class="add-service-input-field">
                 <p>Service description <span>(required)</span></p>
                 <InputText @bind-Value="_registrationForm.Name" typeof="text" placeholder="Service description..." />
             </div>
-            <div class="add-user-input-field">
+            <div class="add-service-input-field">
                 <p>Cost per hour <span>(required)</span></p>
                 <InputNumber @bind-Value="_registrationForm.PricePerHour" placeholder="Cost..." />
             </div>
@@ -33,7 +33,7 @@
             <tr>
                 <th>Id</th>
                 <th>Service</th>
-                <th>Cost</th>
+                <th>Cost per hour</th>
                 <th></th>
             </tr>
         </thead>
@@ -42,10 +42,10 @@
             {
                 @if (editModeEnabled && selectedService == service)
                 {
-                    <td>@service.Id</td>
-                    <td><InputText @bind-Value="@service.Name" typeof="text" placeholder="Service...." /></td>
-                    <td><InputNumber @bind-Value="@service.PricePerHour" typeof="text" placeholder="Cost..." /></td>
-                    <td>
+                    <td class="py-4">@service.Id</td>
+                    <td class="py-4"><InputText @bind-Value="@service.Name" typeof="text" placeholder="Service...." /></td>
+                    <td class="py-4"><InputNumber @bind-Value="@service.PricePerHour" typeof="text" placeholder="Cost..." /></td>
+                    <td class="py-4">
                         @if (!deleteConfirmEnabled)
                         {
                         <button @onclick="async ()=>{await SaveUpdatedToDb(service);}">Save</button>
@@ -77,7 +77,7 @@
 @code {
     private ServiceRegistrationForm _registrationForm = new();
     private List<Service> _servicelist = [];
-    private bool addUserMenuOpened = false;
+    private bool addServiceMenuOpened = false;
     private bool editModeEnabled = false;
     private bool deleteConfirmEnabled = false;
     private Service selectedService = null!;
@@ -114,15 +114,15 @@
         var result = await _serviceService.CreateAsync(_registrationForm);
         if (result != null)
         {
-            UserAdded();
+            ServiceAdded();
             await UpdateCustomerList();
         }
     }
 
-    private void UserAdded()
+    private void ServiceAdded()
     {
         _registrationForm = new();
-        addUserMenuOpened = false;
+        addServiceMenuOpened = false;
     }
 
     private async Task SaveUpdatedToDb(Service service)

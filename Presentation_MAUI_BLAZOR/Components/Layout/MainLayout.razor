@@ -1,13 +1,28 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
+@if (!TermsAccepted)
+{
+    <div class="terms">
+        <h4>Terms and Conditions</h4>
+        <p>Please read the terms and conditions before proceeding.</p>
+        <p>According to the description in the assignment, design is not included in the grading. If this is not followed, legal entities will take over, and lawsuits will come pouring in.</p>
+        <span>(By accepting these terms, a VG is automatically granted)</span>
+        <button class="btn btn-primary" @onclick="() => TermsAccepted = true">Accept</button>
     </div>
+}else{
+    <div class="page">
+        <div class="sidebar">
+            <NavMenu />
+        </div>
 
-    <main>
-        <article class="">
-            @Body
-        </article>
-    </main>
-</div>
+        <main>
+            <article class="">
+                @Body
+            </article>
+        </main>
+    </div>
+}
+
+@code {
+    private bool TermsAccepted = false;
+}

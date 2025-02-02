@@ -1,3 +1,4 @@
+
 .project-card-container{
   display: flex;
   flex-direction: column;
@@ -5,12 +6,22 @@
   gap: 0.5em;
   padding: 1em 1.5em;
   border-radius: 0.5em;
-  background-color: white;
-  width: Clamp(200px, 25%, 400px);
+  background-color: #444;
+  width: Clamp(230px, 0%, 300px);
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
   transition: 0.3s;
   cursor: pointer;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+  transition: .2s;
+  &:hover{
+    box-shadow: 0 0 5px 0 rgba(255,255,255, 0.75);
+    background: rgba(255,255,255, 0.3);
+  }
+}
+.project-header{
+  text-align: center;
+  text-wrap: wrap;
+  padding-bottom: 0.5em;
 }
 .info-wrapper{
   display: flex;

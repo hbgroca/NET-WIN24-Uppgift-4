@@ -25,8 +25,39 @@ public class ProjectEntity
     public int CustomerId { get; set; }
     public CustomerEntity Customer { get; set; } = null!;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     public int StatusId { get; set; }
     public StatusEntity Status { get; set; } = null!;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public int ServiceId { get; set; }
     public ServiceEntity Service { get; set; } = null!;

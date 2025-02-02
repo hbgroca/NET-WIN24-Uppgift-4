@@ -7,15 +7,12 @@
     justify-content: flex-end;
     align-items: center;
     gap: 0.5em;
-    .top-bar-adduser-text
-
-{
-    display: flex;
-    align-items: center;
-    gap: 0.5em;
-    cursor: pointer;
-}
-
+    .top-bar-adduser-text{
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      cursor: pointer;
+    }
 }
 
 .top-bar-label {
@@ -32,6 +29,11 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: start;
+    Input{
+      border-radius: 5px;
+      padding: 0.3em;
+      border: none;
+    }
 }
 
 .add-user-input-container {
@@ -40,28 +42,34 @@
     width: 100%;
     justify-content: space-between;
     gap: 0.5em;
+    padding-left: 0.5em;
 }
 
 .add-user-input-field {
     margin-top: 0.5em;
 }
 
-.hover-darken:hover {
-    transition: 0.3s;
-    background-color: rgba(0, 0, 0, 0.1);
-    cursor: pointer;
+.hover-darken:hover{
+  td{
+    color: white;
+  }
+  transition: 0.3s;
+  background-color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
 }
 
+tr{
+  color: white;
+}
 td {
-    align-items: center;
-    Input
-
-{
+  align-items: center;
+  color: rgba(255, 255, 255, 0.75);
+  Input{
     background-color: white;
     color: black;
     border: none;
-}
-
+    border-radius: 5px;
+  }
 }
 
 button {
@@ -74,19 +82,21 @@ button {
 }
 
 .customers-projects-wrapper {
-    padding: 1em;
-    h6
-
-{
+  padding: 1em;
+  h6 {
+    color: white;
     font-weight: bold;
-}
-
+  }
 }
 
 .customers-projects {
-    border: none;
-    padding: 0.5em;
-    background-color: rgba(255, 255, 255, 0.3);
-    border-radius: 0.5em;
-    cursor: pointer;
+  border: none;
+  padding: 0.5em;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 0.5em;
+  cursor: pointer;
+  color: white;
+  &:hover{
+    background-color: rgba(255, 255, 255, 0.5);
+  }
 }

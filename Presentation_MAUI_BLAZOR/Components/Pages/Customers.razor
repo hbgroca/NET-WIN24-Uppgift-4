@@ -2,7 +2,7 @@
 
 <div class=@(addUserMenuOpened ? "hidden" : "top-bar")>
     <div class="top-bar-adduser-text" @onclick="()=>{addUserMenuOpened = !addUserMenuOpened;}">
-        <h6>Add customer </h6><h2>&#43;</h2>
+        <h6>Add customer</h6><h2>&#43;</h2>
     </div>
 </div>
 <div class=@(addUserMenuOpened ? "top-bar add-user" : "hidden")>
@@ -66,14 +66,14 @@
             {
                 @if (editModeEnabled && selectedCustomer == customer)
                 {
-                    <td>@customer.Id</td>
-                    <td><InputText @bind-Value="@customer.OrganisationNumber" typeof="text" placeholder="Organisation Nr" /></td>
-                    <td><InputText @bind-Value="@customer.CompanyName" typeof="text" placeholder="Company name" /></td>
-                    <td><InputText @bind-Value="@customer.FirstName" typeof="text" placeholder="First name" /></td>
-                    <td><InputText @bind-Value="@customer.LastName" typeof="text" placeholder="Last name" /></td>
-                    <td><InputText @bind-Value="@customer.Email" typeof="text" placeholder="Email adress" /></td>
-                    <td><InputText @bind-Value="@customer.Phone" typeof="text" placeholder="Phone number" /></td>
-                    <td>
+                    <td class="py-4">@customer.Id</td>
+                    <td class="py-4"><InputText @bind-Value="@customer.OrganisationNumber" typeof="text" placeholder="Organisation Nr" /></td>
+                    <td class="py-4"><InputText @bind-Value="@customer.CompanyName" typeof="text" placeholder="Company name" /></td>
+                    <td class="py-4"><InputText @bind-Value="@customer.FirstName" typeof="text" placeholder="First name" /></td>
+                    <td class="py-4"><InputText @bind-Value="@customer.LastName" typeof="text" placeholder="Last name" /></td>
+                    <td class="py-4"><InputText @bind-Value="@customer.Email" typeof="text" placeholder="Email adress" /></td>
+                    <td class="py-4"><InputText @bind-Value="@customer.Phone" typeof="text" placeholder="Phone number" /></td>
+                    <td class="py-4">
                         @if (!deleteConfirmEnabled)
                         {
                             <button @onclick="async ()=>{await SaveUpdatedToDb(customer);}">Save</button>
@@ -106,7 +106,7 @@
                             <h6>Connected projects</h6>
                             @if(_customerProjectList.Count == 0)
                             {
-                                <p class="customers-projects">No active projects</p>
+                                <p class="customers-projects">No connected projects</p>
                             }
                             else
                             {

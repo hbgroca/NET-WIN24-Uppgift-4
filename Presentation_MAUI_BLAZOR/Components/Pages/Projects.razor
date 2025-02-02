@@ -14,7 +14,7 @@
 }
 else
 {
-    <div class=@(addMenuOpened ? "hidden" : "customer-list-container")>
+    <div class="customer-list-container">
         <table class="table">
             <thead>
                 <tr>
@@ -46,7 +46,6 @@ else
 
 @code {
     private List<Project> _projectList = new();
-    public bool addMenuOpened = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -62,7 +61,6 @@ else
     public async Task CreateNewProjectClicked()
     {
         await UpdateList();
-        addMenuOpened = false;
     }
 
     private void NavigateToProjectView(int id)

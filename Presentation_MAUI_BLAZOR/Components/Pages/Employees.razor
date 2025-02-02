@@ -52,27 +52,26 @@
         <tbody>
             @foreach (Employee result in _employeeList)
             {
-                @if (editModeEnabled && selectedEmployee == result)
-                {
-                <td>@result.Id</td>
-                <td><InputText @bind-Value="@result.FirstName" typeof="text" placeholder="First name" /></td>
-                <td><InputText @bind-Value="@result.LastName" typeof="text" placeholder="Last name" /></td>
-                <td><InputText @bind-Value="@result.Email" typeof="text" placeholder="Email adress" /></td>
-                <td><InputText @bind-Value="@result.Phone" typeof="text" placeholder="Phone number" /></td>
-                <td>
-                    @if (!deleteConfirmEnabled)
-                    {
-                    <button @onclick="async ()=>{await SaveUpdatedToDb(result);}">Save</button>
-                    <button @onclick="async ()=>{await UpdateEmployeeList();}">Cancel</button>
-                    <button @onclick="()=>{deleteConfirmEnabled = true;}">Remove</button>
-                    }
-                    else
-                    {
-                    <p>Confirm delete</p>
-                    <button @onclick="async ()=>{await RemoveCustomer(result);}">Remove</button>
-                    <button @onclick="()=>{deleteConfirmEnabled = false;}">Cancel</button>
-                    }
-                </td>
+                @if (editModeEnabled && selectedEmployee == result){
+                    <td class="py-4">@result.Id</td>
+                    <td class="py-4"><InputText @bind-Value="@result.FirstName" typeof="text" placeholder="First name" /></td>
+                    <td class="py-4"><InputText @bind-Value="@result.LastName" typeof="text" placeholder="Last name" /></td>
+                    <td class="py-4"><InputText @bind-Value="@result.Email" typeof="text" placeholder="Email adress" /></td>
+                    <td class="py-4"><InputText @bind-Value="@result.Phone" typeof="text" placeholder="Phone number" /></td>
+                    <td class="py-4">
+                        @if (!deleteConfirmEnabled)
+                        {
+                        <button @onclick="async ()=>{await SaveUpdatedToDb(result);}">Save</button>
+                        <button @onclick="async ()=>{await UpdateEmployeeList();}">Cancel</button>
+                        <button @onclick="()=>{deleteConfirmEnabled = true;}">Remove</button>
+                        }
+                        else
+                        {
+                        <p>Confirm delete</p>
+                        <button @onclick="async ()=>{await RemoveCustomer(result);}">Remove</button>
+                        <button @onclick="()=>{deleteConfirmEnabled = false;}">Cancel</button>
+                        }
+                    </td>
                 }
                 else
                 {
@@ -89,7 +88,7 @@
                             <h6>Connected projects</h6>
                             @if (_employeeProjectList.Count == 0)
                             {
-                            <p class="customers-projects">No active projects</p>
+                            <p class="customers-projects">No connected projects</p>
                             }
                             else
                             {
