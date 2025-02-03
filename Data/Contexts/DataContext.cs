@@ -33,6 +33,18 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
                 new StatusEntity { Id = 3, StatusDescription = "Not Started" }
             );
 
+        modelBuilder.Entity<EmployeeEntity>()
+            .HasData(
+                new EmployeeEntity { Id = 1, FirstName = "Klabbe", LastName="Röv", Email="nustrulardetigen@helvetes.net", Phone= "0701234567" },
+                new EmployeeEntity { Id = 2, FirstName = "Hasse", LastName="Kompilator", Email= "hasse.kopilator@domain.net", Phone= "0700765321" }
+            );
+
+        modelBuilder.Entity<CustomerEntity>()
+            .HasData(
+                new CustomerEntity { Id = 1, CompanyNr="556501-1234", CompanyName="Töm & Glöm AB", FirstName = "Robban", LastName = "Carlsson", Email = "nustrulardetigen@helvetes.net", PhoneNumber = "555-123456" },
+                new CustomerEntity { Id = 2, FirstName = "Sara", LastName = "Syntax", Email = "sara.syntax@domain.net", PhoneNumber = "555-654321" }
+            );
+
         modelBuilder.Entity<ServiceEntity>()
             .HasData(
                 new ServiceEntity { Id = 1, ServiceName = "Consulting", Price = 135 },

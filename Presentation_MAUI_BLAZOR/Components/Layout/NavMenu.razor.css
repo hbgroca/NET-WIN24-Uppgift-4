@@ -85,6 +85,11 @@
 .navbar-toggler:checked ~ .nav-scrollable {
     display: block;
 }
+.developertag {
+  color: white;
+  display: none;
+  font-size: .75rem;
+}
 
 @media (min-width: 641px) {
     .navbar-toggler {
@@ -94,9 +99,20 @@
     .nav-scrollable {
         /* Never collapse the sidebar for wide screens */
         display: block;
-        /* Allow sidebar to scroll for tall menus */
+        justify-content: space-between;
+
         height: calc(100vh - 3.5rem);
         overflow-y: auto;
+
+        .developertag {
+          position:absolute;
+          bottom: 0;
+          left: 0;
+          right:0;
+          color: white;
+          text-align: center;
+          display: block;
+        }
     }
 }
 

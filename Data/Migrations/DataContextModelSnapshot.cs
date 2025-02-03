@@ -52,6 +52,26 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CompanyName = "Töm & Glöm AB",
+                            CompanyNr = "556501-1234",
+                            Email = "nustrulardetigen@helvetes.net",
+                            FirstName = "Robban",
+                            LastName = "Carlsson",
+                            PhoneNumber = "555-123456"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "sara.syntax@domain.net",
+                            FirstName = "Sara",
+                            LastName = "Syntax",
+                            PhoneNumber = "555-654321"
+                        });
                 });
 
             modelBuilder.Entity("Data.Entities.EmployeeEntity", b =>
@@ -80,6 +100,24 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Employees");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "nustrulardetigen@helvetes.net",
+                            FirstName = "Klabbe",
+                            LastName = "Röv",
+                            Phone = "0701234567"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "hasse.kopilator@domain.net",
+                            FirstName = "Hasse",
+                            LastName = "Kompilator",
+                            Phone = "0700765321"
+                        });
                 });
 
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
@@ -140,7 +178,7 @@ namespace Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("money");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ServiceName")
                         .IsRequired()
@@ -149,6 +187,44 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Services");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Price = 135m,
+                            ServiceName = "Consulting"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Price = 145m,
+                            ServiceName = "Web Development"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Price = 145m,
+                            ServiceName = "Mobile Development"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Price = 145m,
+                            ServiceName = "Database Development"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Price = 140m,
+                            ServiceName = "Backend Performance"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Price = 0m,
+                            ServiceName = "Hang out"
+                        });
                 });
 
             modelBuilder.Entity("Data.Entities.StatusEntity", b =>
@@ -166,6 +242,23 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("StatusType");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            StatusDescription = "Completed"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            StatusDescription = "In Progress"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            StatusDescription = "Not Started"
+                        });
                 });
 
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
