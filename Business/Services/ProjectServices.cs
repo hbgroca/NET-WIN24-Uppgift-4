@@ -4,6 +4,7 @@ using Business.Interfaces;
 using Business.Models;
 using Data.Entities;
 using Data.Interfaces;
+using System.Linq.Expressions;
 
 namespace Business.Services;
 
@@ -39,20 +40,10 @@ public class ProjectServices(IProjectRepository projectRepository) : IProjectSer
             return [];
     }
 
-
-
-
-
-
-
-
-
-
-
-    public async Task<IEnumerable<Project>> GetProjectsByUserId(int userId)
+    public async Task<IEnumerable<Project>> GetProjectsByAnyId(Expression<Func<ProjectEntity, bool>> expression)
     {
         // Get entites from db
-        var entities = await _projectRepository.GetAllAsync(x => x.CustomerId == userId);
+        var entities = await _projectRepository.GetAllAsync(expression);
         if (entities != null)
         {
             // Remap to models
@@ -62,23 +53,6 @@ public class ProjectServices(IProjectRepository projectRepository) : IProjectSer
         else
             return null!;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public async Task <Project> GetProjectByIdAsync(int id)
     {

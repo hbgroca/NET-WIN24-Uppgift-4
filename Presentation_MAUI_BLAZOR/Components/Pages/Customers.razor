@@ -147,7 +147,7 @@
         }
         else
         {
-            var projects = await _projectService.GetProjectsByUserId(customer.Id);
+            var projects = await _projectService.GetProjectsByAnyId(x => x.CustomerId == customer.Id);
             _customerProjectList = projects.ToList();
             selectedCustomer = customer;
         }
