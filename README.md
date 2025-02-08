@@ -13,7 +13,7 @@ Val av lagringslösning
 Design och inspiration
 - Systemet ska vara strukturerat enligt moderna principer och uppdelat i entities, models, repositories och services. SOLID-principerna ska tillämpas där det är lämpligt. Du får själv välja hur du vill att din applikation ska se ut, det grafiska utseendet bedöms inte, men du kan använda inspiration från Fortnox.
 
-INFORMATION OM PROJEKTUPPGIFTEN
+Information om projektuppgiften
 - Företaget Mattin-Lassei Group AB vill ha ett system för att hantera sina projekt. Du ska bygga en applikation där användare kan lägga till projekt med uppgifter som projektnummer (t.ex. "P-101"), namn, tidsperiod (start- och slutdatum), projektansvarig, kund, tjänst (t.ex. konsulttid 1000 kr/tim), totalpris och status (ej påbörjat, pågående, avslutat). Projektnumret ska genereras automatiskt och får inte ändras efter att projektet skapats.
 - Applikationen ska visa en översikt med alla aktuella projekt och deras projektnummer, namn, tidsperiod och status. Det ska finnas möjlighet att klicka på ett projekt för att komma till en detaljerad vy där alla uppgifter (utom projektnumret) kan redigeras. Användaren ska kunna spara ändringar eller avbryta redigeringen och navigera tillbaka till översikten.
 
@@ -48,3 +48,7 @@ Ett klassbibliotek med följande:
 - Tillämpa Factories. &#10003;
 - Task ska tillämpas där det är lämpligt genom att använda asynkrona metoder och async/await, t.ex. vid databasoperationer. &#10003;
 - Tillämpa Transaction Management för att hantera flera beroende operationer som en transaktion, inklusive rollback vid fel.
+
+Utöver dessa kriterier så har jag
+- Skapat test för services, factories, repositories.
+- Regex på nödvändiga ställen (Epost, telefonnummer och organisationsnummer).
