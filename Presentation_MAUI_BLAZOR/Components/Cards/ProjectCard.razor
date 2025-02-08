@@ -1,10 +1,25 @@
 ﻿<div class="project-card-container" @onclick="()=>NavigateTo(project.Id)">
     <h4 class="project-header">@project.Name</h4>
     <div class="info-wrapper">
-        <h6>Manager: <p>@project.Manager?.FirstName @project.Manager?.LastName</p></h6>
+        @if(project.Manager is null)
+        {
+            <h6>Manager: <p>Not selected</p></h6>
+        }
+        else
+        {
+            <h6>Manager: <p>@project.Manager?.FirstName @project.Manager?.LastName</p></h6>
+        }
+
         @if (string.IsNullOrWhiteSpace(project.Customer?.CompanyName))
         {
-            <h6>Customer: <p>@project.Customer?.FirstName @project.Customer?.LastName</p></h6>
+            @if(project.Manager is null)
+            {
+                <h6>Customer: <p>Not selected</p></h6>
+            }
+            else
+            {
+                <h6>Customer: <p>@project.Customer?.FirstName @project.Customer?.LastName</p></h6>
+            }
         }
         else
         {

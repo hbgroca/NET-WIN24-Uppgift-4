@@ -26,34 +26,52 @@
                 <div>
                     <h6>Manager</h6>
                     <div class="px-4">
-                        <div class="d-flex gap-1">
-                            <p>@_project.Manager?.FirstName</p>
-                            <p>@_project.Manager?.LastName</p>
-                        </div>
-                        <p>&#9743; @_project.Manager?.Email</p>
-                        <p>&#9993; @_project.Manager?.Phone</p>
+                        @if(_project.Manager is null)
+                        {
+                            <div class="d-flex gap-1">
+                                <p>Not selected</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex gap-1">
+                                <p>@_project.Manager?.FirstName</p>
+                                <p>@_project.Manager?.LastName</p>
+                            </div>
+                            <p>&#9743; @_project.Manager?.Email</p>
+                            <p>&#9993; @_project.Manager?.Phone</p>
+                        }
                     </div>
                 </div>
 
                 <div>
                     <h6>Customer</h6>
                     <div class="px-4">
-                        @if (!string.IsNullOrEmpty(_project.Customer?.CompanyName))
+                        @if (_project.Customer is null)
                         {
-                            <p>@_project.Customer.CompanyName</p>
+                            <div class="d-flex gap-1">
+                                <p>Not selected</p>
+                            </div>
                         }
-                        @if (!string.IsNullOrEmpty(_project.Customer?.OrganisationNumber))
+                        else
                         {
-                            <p>@_project.Customer.OrganisationNumber</p>
+                            @if (!string.IsNullOrEmpty(_project.Customer?.CompanyName))
+                            {
+                                <p>@_project.Customer.CompanyName</p>
+                            }
+                            @if (!string.IsNullOrEmpty(_project.Customer?.OrganisationNumber))
+                            {
+                                <p>@_project.Customer.OrganisationNumber</p>
+                            }
+
+                            <div class="d-flex gap-1">
+                                <p>@_project.Customer?.FirstName</p>
+                                <p>@_project.Customer?.LastName</p>
+                            </div>
+
+                            <p>&#9993; @_project.Customer?.Email</p>
+                            <p>&#9743; @_project.Customer?.Phone</p>
                         }
-
-                        <div class="d-flex gap-1">
-                            <p>@_project.Customer?.FirstName</p>
-                            <p>@_project.Customer?.LastName</p>
-                        </div>
-
-                        <p>&#9993; @_project.Customer?.Email</p>
-                        <p>&#9743; @_project.Customer?.Phone</p>
                     </div>
                 </div>
             </div>
@@ -73,11 +91,20 @@
 
                 <div>
                     <h6>Service</h6>
-                    <div class="px-4 d-flex gap-1">
-                        <p>@_project.Service?.Name</p>
-                        <p>@decimal.Round(_project.Service!.PricePerHour, 2)<span> $/hour</span></p>
-                    </div>
-                    <p class="px-4">Total cost: <span>$</span>@_project.ServiceCost</p>
+                    @if (_project.Service is null)
+                    {
+                        <div class="d-flex gap-1">
+                            <p>Not selected</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="px-4 d-flex gap-1">
+                            <p>@_project.Service?.Name</p>
+                            <p>@decimal.Round(_project.Service!.PricePerHour, 2)<span> $/hour</span></p>
+                        </div>
+                        <p class="px-4">Total cost: <span>$</span>@_project.ServiceCost</p>
+                    }
                 </div>
 
                 <div>
@@ -113,7 +140,7 @@
                         }
                     </div>
                     <h6>Project name</h6>
-                    <InputText class="w-100" @bind-Value="_project.Name"/>
+                    <InputText @bind-Value="_project.Name" class="@(NameInvalid ? "w-100 invalid" : "w-100")"/>
                 </div>
 
                 <div>
@@ -173,8 +200,8 @@
                             }
                         </InputSelect>
                     </div>
-                    <div class="d-flex gap-1">
-                        <InputNumber class="w-25" @bind-Value="@_project.ServiceCost" />
+                    <div class="cost-inputfield-wrapper">
+                        <InputNumber @bind-Value="@_project.ServiceCost" class="@(CostInvalid ? "w-25 invalid" : "w-25")"/>
                         <p>$</p>
                     </div>
                 </div>
@@ -212,6 +239,9 @@ else
     public bool deleteConfirmOpened = false;
     private Project _project = null!;
 
+    private bool NameInvalid = false;
+    private bool CostInvalid = false;
+
     IEnumerable<Employee> employees = [];
     IEnumerable<Customer> customers = [];
     IEnumerable<Service> services = [];
@@ -233,12 +263,38 @@ else
 
     private async Task SaveProject()
     {
+        if (CheckInputs())
+            return;
+
         editModeEnabled = false;
         Project result = await _projectService.UpdateProject(_project);
         if (result != null)
         {
             _project = result;
         }
+    }
+
+    private bool CheckInputs()
+    {
+        bool InvalidExists = false;
+        NameInvalid = false;
+        CostInvalid = false;
+
+        if (string.IsNullOrWhiteSpace(_project.Name))
+        {
+            NameInvalid = true;
+            InvalidExists = true;
+        }
+        else
+            _project.Name = _project.Name.Trim();
+
+        if (_project.ServiceCost <= 0)
+        {
+            CostInvalid = true;
+            InvalidExists = true;
+        }
+
+        return InvalidExists;
     }
 
     private async Task RemoveProject()

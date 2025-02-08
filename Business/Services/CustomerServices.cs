@@ -42,8 +42,6 @@ public class CustomerServices(ICustomerRepository repository) : ICustomerService
         return [];
     }
 
-
-
     // Update
     public async Task<Customer> Update(Customer customer)
     {

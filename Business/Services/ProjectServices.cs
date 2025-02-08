@@ -13,7 +13,7 @@ public class ProjectServices(IProjectRepository projectRepository) : IProjectSer
     private readonly IProjectRepository _projectRepository = projectRepository;
 
     // Create
-    public async Task<Project> Create(ProjectRegistrationForm form)
+    public async Task<Project> CreateAsync(ProjectRegistrationForm form)
     {
         if (form == null)
             return null!;
@@ -40,7 +40,7 @@ public class ProjectServices(IProjectRepository projectRepository) : IProjectSer
             return [];
     }
 
-    public async Task<IEnumerable<Project>> GetProjectsByAnyId(Expression<Func<ProjectEntity, bool>> expression)
+    public async Task<IEnumerable<Project>> GetAllProjectsAsync(Expression<Func<ProjectEntity, bool>> expression)
     {
         // Get entites from db
         var entities = await _projectRepository.GetAllAsync(expression);

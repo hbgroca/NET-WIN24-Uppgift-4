@@ -1,4 +1,5 @@
 ﻿@page "/customers"
+@using System.Text.RegularExpressions
 
 <div class=@(addUserMenuOpened ? "hidden" : "top-bar")>
     <div class="top-bar-adduser-text" @onclick="()=>{addUserMenuOpened = !addUserMenuOpened;}">
@@ -15,31 +16,31 @@
         <div >
             <div class="add-user-input-field">
                 <p>Organisation Id</p>
-                <InputText @bind-Value="_registrationForm.OrganisationNumber" typeof="text" placeholder="Oranisation Id" />
+                <InputText @bind-Value="_registrationForm.OrganisationNumber" typeof="text" placeholder="Oranisation Id" class="@(OrgNrInvalid ? "invalid" : "")" />
             </div>
             <div class="add-user-input-field">
                 <p>Company name</p>
-                <InputText @bind-Value="_registrationForm.CompanyName" typeof="text" placeholder="Company name" />
+                <InputText @bind-Value="_registrationForm.CompanyName" typeof="text" placeholder="Company name"/>
             </div>
         </div>
         <div >
             <div class="add-user-input-field">
                 <p>First name <span>(required)</span></p>
-                <InputText @bind-Value="_registrationForm.FirstName" typeof="text" placeholder="First name..." />
+                <InputText @bind-Value="_registrationForm.FirstName" typeof="text" placeholder="First name..." class="@(FirstNameInvalid ? "invalid" : "")" />
             </div>
             <div class="add-user-input-field">
                 <p>Last name <span>(required)</span></p>
-                <InputText @bind-Value="_registrationForm.LastName" typeof="text" placeholder="Last name..." />
+                <InputText @bind-Value="_registrationForm.LastName" typeof="text" placeholder="Last name..." class="@(LastNameInvalid ? "invalid" : "")" />
             </div>
         </div>
         <div >
             <div class="add-user-input-field">
                 <p>Email <span>(required)</span></p>
-                <InputText @bind-Value="_registrationForm.Email" typeof="text" placeholder="Email adress..." />
+                <InputText @bind-Value="_registrationForm.Email" typeof="text" placeholder="Email adress..." class="@(EmailInvalid ? "invalid" : "")" />
             </div>
             <div class="add-user-input-field">
                 <p>Phone</p>
-                <InputText @bind-Value="_registrationForm.Phone" typeof="text" placeholder="Phone number..." />
+                <InputText @bind-Value="_registrationForm.Phone" typeof="text" placeholder="Phone number..." class="@(PhoneInvalid ? "invalid" : "")" />
             </div>
         </div>
 
@@ -67,12 +68,12 @@
                 @if (editModeEnabled && selectedCustomer == customer)
                 {
                     <td class="py-4">@customer.Id</td>
-                    <td class="py-4"><InputText @bind-Value="@customer.OrganisationNumber" typeof="text" placeholder="Organisation Nr" /></td>
+                <td class="py-4"><InputText @bind-Value="@customer.OrganisationNumber" typeof="text" placeholder="Organisation Nr" class="@(EditModeOrgNrInvalid ? "invalid" : "")" /></td>
                     <td class="py-4"><InputText @bind-Value="@customer.CompanyName" typeof="text" placeholder="Company name" /></td>
-                    <td class="py-4"><InputText @bind-Value="@customer.FirstName" typeof="text" placeholder="First name" /></td>
-                    <td class="py-4"><InputText @bind-Value="@customer.LastName" typeof="text" placeholder="Last name" /></td>
-                    <td class="py-4"><InputText @bind-Value="@customer.Email" typeof="text" placeholder="Email adress" /></td>
-                    <td class="py-4"><InputText @bind-Value="@customer.Phone" typeof="text" placeholder="Phone number" /></td>
+                    <td class="py-4"><InputText @bind-Value="@customer.FirstName" typeof="text" placeholder="First name" class="@(EditModeFirstNameInvalid ? "invalid" : "")" /></td>
+                    <td class="py-4"><InputText @bind-Value="@customer.LastName" typeof="text" placeholder="Last name" class="@(EditModeLastNameInvalid ? "invalid" : "")" /></td>
+                    <td class="py-4"><InputText @bind-Value="@customer.Email" typeof="text" placeholder="Email adress" class="@(EditModeEmailInvalid ? "invalid" : "")" /></td>
+                    <td class="py-4"><InputText @bind-Value="@customer.Phone" typeof="text" placeholder="Phone number" class="@(EditModePhoneInvalid ? "invalid" : "")" /></td>
                     <td class="py-4">
                         @if (!deleteConfirmEnabled)
                         {
@@ -112,9 +113,9 @@
                             {
                                 @foreach (var project in _customerProjectList)
                                 {
-                                <div>
-                                    <p class="customers-projects" @onclick="()=>{NavigateToProject(project.Id);}">(P-@project.Id) @project.Name</p>
-                                </div>
+                                    <div>
+                                        <p class="customers-projects" @onclick="()=>{NavigateToProject(project.Id);}">(P-@project.Id) @project.Name</p>
+                                    </div>
                                 }
                             }
                         </div>
@@ -134,6 +135,18 @@
     private bool deleteConfirmEnabled = false;
     private Customer selectedCustomer = null!;
 
+    private bool OrgNrInvalid = false;
+    private bool FirstNameInvalid = false;
+    private bool LastNameInvalid = false;
+    private bool EmailInvalid = false;
+    private bool PhoneInvalid = false;
+
+    private bool EditModeOrgNrInvalid = false;
+    private bool EditModeFirstNameInvalid = false;
+    private bool EditModeLastNameInvalid = false;
+    private bool EditModeEmailInvalid = false;
+    private bool EditModePhoneInvalid = false;
+
     protected override async Task OnInitializedAsync()
     {
         await UpdateCustomerList();
@@ -147,7 +160,7 @@
         }
         else
         {
-            var projects = await _projectService.GetProjectsByAnyId(x => x.CustomerId == customer.Id);
+            var projects = await _projectService.GetAllProjectsAsync(x => x.CustomerId == customer.Id);
             _customerProjectList = projects.ToList();
             selectedCustomer = customer;
         }
@@ -165,14 +178,8 @@
 
     private async Task SubmitInputs()
     {
-        if (string.IsNullOrWhiteSpace(_registrationForm.FirstName))
+        if (CheckInputs())
             return;
-        if (string.IsNullOrWhiteSpace(_registrationForm.LastName))
-            return;
-        if (string.IsNullOrWhiteSpace(_registrationForm.Email))
-            return;
-
-        _registrationForm.Email = _registrationForm.Email.ToLower();
 
         var result = await _customerService.CreateAsync(_registrationForm);
         if (result != null)
@@ -180,7 +187,139 @@
             UserAdded();
             await UpdateCustomerList();
         }
+    }
 
+    private bool CheckInputs()
+    {
+        bool InvalidExists = false;
+        OrgNrInvalid = false;
+        FirstNameInvalid = false;
+        LastNameInvalid = false;
+        PhoneInvalid = false;
+        EmailInvalid = false;
+
+        if (string.IsNullOrWhiteSpace(_registrationForm.FirstName))
+        {
+            FirstNameInvalid = true;
+            InvalidExists = true;
+        }else
+            _registrationForm.FirstName = _registrationForm.FirstName.Trim();
+        
+        if (string.IsNullOrWhiteSpace(_registrationForm.LastName))
+        {
+            LastNameInvalid = true;
+            InvalidExists = true;
+        }else
+            _registrationForm.LastName = _registrationForm.LastName.Trim();
+        
+        if (_registrationForm.CompanyName != null)
+            _registrationForm.CompanyName = _registrationForm.CompanyName.Trim();
+
+        if (string.IsNullOrWhiteSpace(_registrationForm.Email))
+        {
+            EmailInvalid = true;
+            InvalidExists = true;
+        }
+        else
+        {
+            _registrationForm.Email = _registrationForm.Email.Trim().ToLower();
+            var emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+            if (!Regex.IsMatch(_registrationForm.Email, emailPattern))
+            {
+                EmailInvalid = true;
+                InvalidExists = true;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(_registrationForm.Phone))
+        {
+            _registrationForm.Phone = _registrationForm.Phone.Trim();
+            var phonePattern = @"^\d{1,12}$";
+            if (!Regex.IsMatch(_registrationForm.Phone, phonePattern))
+            {
+                PhoneInvalid = true;
+                InvalidExists = true;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(_registrationForm.OrganisationNumber))
+        {
+            _registrationForm.OrganisationNumber = _registrationForm.OrganisationNumber.Trim();
+            var regexPattern = @"^\d{6}-\d{4}$";
+            if (!Regex.IsMatch(_registrationForm.OrganisationNumber, regexPattern))
+            {
+                OrgNrInvalid = true;
+                InvalidExists = true;
+            }
+        }
+
+        return InvalidExists;
+    }
+
+    private bool CheckUpdatedInputs()
+    {
+        bool InvalidExists = false;
+        EditModeOrgNrInvalid = false;
+        EditModeFirstNameInvalid = false;
+        EditModeLastNameInvalid = false;
+        EditModeEmailInvalid = false;
+        EditModePhoneInvalid = false;
+
+        if (string.IsNullOrWhiteSpace(selectedCustomer.FirstName))
+        {
+            EditModeFirstNameInvalid = true;
+            InvalidExists = true;
+        }
+        else
+            selectedCustomer.FirstName = selectedCustomer.FirstName.Trim();
+
+        if (string.IsNullOrWhiteSpace(selectedCustomer.LastName))
+        {
+            EditModeLastNameInvalid = true;
+            InvalidExists = true;
+        }
+        else
+            selectedCustomer.LastName = selectedCustomer.LastName.Trim();
+
+        if (string.IsNullOrWhiteSpace(selectedCustomer.Email))
+        {
+            EditModeEmailInvalid = true;
+            InvalidExists = true;
+        }
+        else
+        {
+            selectedCustomer.Email = selectedCustomer.Email.Trim().ToLower();
+            var emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+            if (!Regex.IsMatch(selectedCustomer.Email, emailPattern))
+            {
+                EditModeEmailInvalid = true;
+                InvalidExists = true;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(selectedCustomer.Phone))
+        {
+            selectedCustomer.Phone = selectedCustomer.Phone.Trim();
+            var phonePattern = @"^\d{1,12}$";
+            if (!Regex.IsMatch(selectedCustomer.Phone, phonePattern))
+            {
+                EditModePhoneInvalid = true;
+                InvalidExists = true;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(selectedCustomer.OrganisationNumber))
+        {
+            selectedCustomer.OrganisationNumber = selectedCustomer.OrganisationNumber.Trim();
+            var regexPattern = @"^\d{6}-\d{4}$";
+            if (!Regex.IsMatch(selectedCustomer.OrganisationNumber, regexPattern))
+            {
+                EditModeOrgNrInvalid = true;
+                InvalidExists = true;
+            }
+        }
+
+        return InvalidExists;
     }
 
     private void UserAdded()
@@ -191,6 +330,9 @@
 
     private async Task SaveUpdatedToDb(Customer entity)
     {
+        if (CheckUpdatedInputs())
+            return;
+
         await _customerService.Update(entity);
         await UpdateCustomerList();
         editModeEnabled = false;

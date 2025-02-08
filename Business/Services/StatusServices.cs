@@ -9,26 +9,6 @@ public class StatusServices(IStatusRepository repository) : IStatusServices
 {
     private readonly IStatusRepository _statusRepository = repository;
 
-    public async Task CreateDefaultAsync()
-    {
-        // Creates to default values
-        StatusEntity entity = new StatusEntity
-        {
-            StatusDescription = "In Progress"
-        };
-        await _statusRepository.CreateAsync(entity);
-        entity = new StatusEntity
-        {
-            StatusDescription = "Finished"
-        };
-        await _statusRepository.CreateAsync(entity);
-        entity = new StatusEntity
-        {
-            StatusDescription = "Not Started"
-        };
-        await _statusRepository.CreateAsync(entity);
-    }
-
     public async Task<IEnumerable<Status>> GetAllAsync()
     {
         // Get enteties from DB

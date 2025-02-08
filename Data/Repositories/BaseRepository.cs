@@ -1,6 +1,5 @@
 ﻿using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace Data.Repositories;
@@ -9,10 +8,6 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
 {
     protected readonly DataContext _context = context;
     protected readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
-
-
-
-
 
     // Create
     public async Task<TEntity> CreateAsync(TEntity entity)

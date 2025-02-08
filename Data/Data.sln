@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "..\Business\Bus
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation_MAUI_BLAZOR", "..\Presentation_MAUI_BLAZOR\Presentation_MAUI_BLAZOR.csproj", "{1010A51E-CCD4-43D8-A5B4-A715949DB37F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data_Test", "..\DataTest\Data_Test.csproj", "{88E10855-0CEE-472C-A2FE-BA4550850DAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business_Test", "..\Test_Business\Business_Test.csproj", "{F295837D-53B5-4602-B27A-3F66BA569A79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{1010A51E-CCD4-43D8-A5B4-A715949DB37F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1010A51E-CCD4-43D8-A5B4-A715949DB37F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1010A51E-CCD4-43D8-A5B4-A715949DB37F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88E10855-0CEE-472C-A2FE-BA4550850DAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88E10855-0CEE-472C-A2FE-BA4550850DAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88E10855-0CEE-472C-A2FE-BA4550850DAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88E10855-0CEE-472C-A2FE-BA4550850DAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F295837D-53B5-4602-B27A-3F66BA569A79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F295837D-53B5-4602-B27A-3F66BA569A79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F295837D-53B5-4602-B27A-3F66BA569A79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F295837D-53B5-4602-B27A-3F66BA569A79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

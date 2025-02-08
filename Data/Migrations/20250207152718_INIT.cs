@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class INIT : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -84,10 +84,10 @@ namespace Data.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
                     EndDate = table.Column<DateOnly>(type: "date", nullable: true),
-                    EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    EmployeeId = table.Column<int>(type: "int", nullable: true),
+                    CustomerId = table.Column<int>(type: "int", nullable: true),
                     StatusId = table.Column<int>(type: "int", nullable: false),
-                    ServiceId = table.Column<int>(type: "int", nullable: false),
+                    ServiceId = table.Column<int>(type: "int", nullable: true),
                     ServiceCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
@@ -97,20 +97,17 @@ namespace Data.Migrations
                         name: "FK_Projects_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Projects_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Projects_Services_ServiceId",
                         column: x => x.ServiceId,
                         principalTable: "Services",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Projects_StatusType_StatusId",
                         column: x => x.StatusId,
@@ -125,7 +122,9 @@ namespace Data.Migrations
                 values: new object[,]
                 {
                     { 1, "Töm & Glöm AB", "556501-1234", "nustrulardetigen@helvetes.net", "Robban", "Carlsson", "555-123456" },
-                    { 2, null, null, "sara.syntax@domain.net", "Sara", "Syntax", "555-654321" }
+                    { 2, null, null, "sara.syntax@domain.net", "Sara", "Syntax", "555-654321" },
+                    { 3, null, null, "mackan.nilsson@domain.net", "Markus", "Nilsson", "555-123456" },
+                    { 4, null, null, "henke@domain.net", "Henrik", "Rosengren", "555-123456" }
                 });
 
             migrationBuilder.InsertData(
@@ -134,7 +133,8 @@ namespace Data.Migrations
                 values: new object[,]
                 {
                     { 1, "nustrulardetigen@helvetes.net", "Klabbe", "Röv", "0701234567" },
-                    { 2, "hasse.kopilator@domain.net", "Hasse", "Kompilator", "0700765321" }
+                    { 2, "hasse.kopilator@domain.net", "Hasse", "Kompilator", "0700765321" },
+                    { 3, "nisse@domain.net", "Nils", "Visman", "0700123456" }
                 });
 
             migrationBuilder.InsertData(

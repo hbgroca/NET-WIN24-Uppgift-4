@@ -15,11 +15,14 @@
         <div >
             <div class="add-service-input-field">
                 <p>Service description <span>(required)</span></p>
-                <InputText @bind-Value="_registrationForm.Name" typeof="text" placeholder="Service description..." />
+                <InputText @bind-Value="_registrationForm.Name" typeof="text" placeholder="Service description..." class="@(DescriptionInvalid ? "invalid" : "")" />
             </div>
             <div class="add-service-input-field">
                 <p>Cost per hour <span>(required)</span></p>
-                <InputNumber @bind-Value="_registrationForm.PricePerHour" placeholder="Cost..." />
+                <div>
+                    <span>$</span>
+                    <InputNumber @bind-Value="_registrationForm.PricePerHour" placeholder="Cost..." class="@(CostInvalid ? "invalid" : "")" />
+                </div>
             </div>
         </div>
 
@@ -43,8 +46,13 @@
                 @if (editModeEnabled && selectedService == service)
                 {
                     <td class="py-4">@service.Id</td>
-                    <td class="py-4"><InputText @bind-Value="@service.Name" typeof="text" placeholder="Service...." /></td>
-                    <td class="py-4"><InputNumber @bind-Value="@service.PricePerHour" typeof="text" placeholder="Cost..." /></td>
+                    <td class="py-4"><InputText @bind-Value="@service.Name" typeof="text" placeholder="Service...." class="@(EditModeDescriptionInvalid ? "invalid" : "")" /></td>
+                    <td class="py-4">
+                        <div>
+                            <span>$</span>
+                            <InputNumber @bind-Value="@service.PricePerHour" typeof="text" placeholder="Cost..." class="@(EditModeCostInvalid ? "invalid" : "")" />
+                        </div>
+                    </td>
                     <td class="py-4">
                         @if (!deleteConfirmEnabled)
                         {
@@ -82,6 +90,11 @@
     private bool deleteConfirmEnabled = false;
     private Service selectedService = null!;
 
+    private bool DescriptionInvalid = false;
+    private bool CostInvalid = false;
+    private bool EditModeDescriptionInvalid = false;
+    private bool EditModeCostInvalid = false;
+
     protected override async Task OnInitializedAsync()
     {
         await UpdateCustomerList();
@@ -108,7 +121,7 @@
 
     private async Task SubmitInputs()
     {
-        if (string.IsNullOrWhiteSpace(_registrationForm.Name))
+        if (CheckInputs())
             return;
 
         var result = await _serviceService.CreateAsync(_registrationForm);
@@ -119,6 +132,52 @@
         }
     }
 
+    private bool CheckInputs()
+    {
+        bool InvalidExists = false;
+        DescriptionInvalid = false;
+        CostInvalid = false;
+
+        if (string.IsNullOrWhiteSpace(_registrationForm.Name))
+        {
+            DescriptionInvalid = true;
+            InvalidExists = true;
+        }
+        else
+            _registrationForm.Name = _registrationForm.Name.Trim();
+
+        if (_registrationForm.PricePerHour <= 0)
+        {
+            CostInvalid = true;
+            InvalidExists = true;
+        }
+
+        return InvalidExists;
+    }
+
+    private bool CheckUpdatedInputs()
+    {
+        bool InvalidExists = false;
+        EditModeDescriptionInvalid = false;
+        EditModeCostInvalid = false;
+
+        if (string.IsNullOrWhiteSpace(selectedService.Name))
+        {
+            EditModeDescriptionInvalid = true;
+            InvalidExists = true;
+        }
+        else
+            selectedService.Name = selectedService.Name.Trim();
+
+        if (selectedService.PricePerHour <= 0)
+        {
+            EditModeCostInvalid = true;
+            InvalidExists = true;
+        }
+
+        return InvalidExists;
+    }
+
     private void ServiceAdded()
     {
         _registrationForm = new();
@@ -127,6 +186,9 @@
 
     private async Task SaveUpdatedToDb(Service service)
     {
+        if (CheckUpdatedInputs())
+            return;
+
         await _serviceService.Update(service);
         await UpdateCustomerList();
         editModeEnabled = false;

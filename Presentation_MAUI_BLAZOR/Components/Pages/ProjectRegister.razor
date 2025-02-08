@@ -11,7 +11,7 @@
     <div class="card-container">
         <div class="card-input-wrapper">
             <p>Project Name</p>
-            <InputText class="w-100" @bind-Value="@_registrationForm.Name" typeof="text"/>
+            <InputText @bind-Value="@_registrationForm.Name" typeof="text" class="@(NameInvalid ? "w-100 invalid" : "w-100")"/>
         </div>
 
         <div class="card-input-wrapper-sbs">
@@ -34,7 +34,7 @@
                         <option value="@employee.Id">@employee.FirstName @employee.LastName</option>
                     }
                 </InputSelect>
-                @* <p class="card-input-add-btn">+</p> *@
+                @* <p class="card-input-add-btn">+</p>  *@
             </div>
         </div>
 
@@ -74,8 +74,8 @@
             <div class="card-input-number-cost-wrapper">
                 <p>Total cost</p>
                 <div>
-                    <InputNumber class="card-input-number-cost" @bind-Value="@_registrationForm.ServiceCost" />
                     <p>$</p>
+                    <InputNumber @bind-Value="@_registrationForm.ServiceCost" class="@(CostInvalid ? "card-input-number-cost invalid" : "card-input-number-cost")"/>
                 </div>
             </div>
         </div>
@@ -114,6 +114,9 @@
     IEnumerable<Service> services = [];
     IEnumerable<Status> statuses = [];
 
+    private bool NameInvalid = false;
+    private bool CostInvalid = false;
+
     protected override async Task OnInitializedAsync()
     {
         await UpdateLists();
@@ -140,6 +143,9 @@
 
     private async Task AddProjectToDb()
     {
+        if (CheckInputs())
+            return;
+
         // Set selected values to registration form
         _registrationForm.ManagerId = selectedEmployee;
         _registrationForm.ServiceId = selectedService;
@@ -147,11 +153,34 @@
         _registrationForm.StatusId = selectedStatus;
 
         // Add project to db
-        var result = await _projectService.Create(_registrationForm);
+        var result = await _projectService.CreateAsync(_registrationForm);
         if (result != null)
         {
             NavigateToProject();
         }
+    }
+
+    private bool CheckInputs()
+    {
+        bool InvalidExists = false;
+        NameInvalid = false;
+        CostInvalid = false;
+
+        if (string.IsNullOrWhiteSpace(_registrationForm.Name))
+        {
+            NameInvalid = true;
+            InvalidExists = true;
+        }
+        else
+            _registrationForm.Name = _registrationForm.Name.Trim();
+
+        if (_registrationForm.ServiceCost <= 0)
+        {
+            CostInvalid = true;
+            InvalidExists = true;
+        }
+
+        return InvalidExists;
     }
 
     private void NavigateToProject()

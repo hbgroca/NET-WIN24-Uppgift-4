@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250203095909_Init")]
-    partial class Init
+    [Migration("20250207152718_INIT")]
+    partial class INIT
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,6 +74,22 @@ namespace Data.Migrations
                             FirstName = "Sara",
                             LastName = "Syntax",
                             PhoneNumber = "555-654321"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "mackan.nilsson@domain.net",
+                            FirstName = "Markus",
+                            LastName = "Nilsson",
+                            PhoneNumber = "555-123456"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Email = "henke@domain.net",
+                            FirstName = "Henrik",
+                            LastName = "Rosengren",
+                            PhoneNumber = "555-123456"
                         });
                 });
 
@@ -120,6 +136,14 @@ namespace Data.Migrations
                             FirstName = "Hasse",
                             LastName = "Kompilator",
                             Phone = "0700765321"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "nisse@domain.net",
+                            FirstName = "Nils",
+                            LastName = "Visman",
+                            Phone = "0700123456"
                         });
                 });
 
@@ -131,13 +155,13 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 100L);
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<DateOnly?>("EndDate")
@@ -150,7 +174,7 @@ namespace Data.Migrations
                     b.Property<decimal>("ServiceCost")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ServiceId")
+                    b.Property<int?>("ServiceId")
                         .HasColumnType("int");
 
                     b.Property<DateOnly>("StartDate")
@@ -269,20 +293,17 @@ namespace Data.Migrations
                     b.HasOne("Data.Entities.CustomerEntity", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Data.Entities.EmployeeEntity", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Data.Entities.ServiceEntity", "Service")
                         .WithMany()
                         .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Data.Entities.StatusEntity", "Status")
                         .WithMany()

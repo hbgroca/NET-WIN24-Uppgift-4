@@ -20,13 +20,18 @@
   align-items: center;
   width: 100%;
 }
-.add-service{
+.add-service {
   height: fit-content;
   padding: 1em 0.5em;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: start;
+  Input{
+    border-radius: 5px;
+    padding: 0.3em;
+    border: none;
+  }
 }
 
 .add-service-input-container{

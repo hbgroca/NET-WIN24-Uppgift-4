@@ -28,17 +28,32 @@ public static class ProjectFactory
         _project.Name = entity.ProjectName;
         _project.StatusId = entity.StatusId;
         _project.Description = entity.Description;
-        _project.CustomerId = entity.CustomerId;
-        _project.ManagerId = entity.EmployeeId;
         _project.StartDate = entity.StartDate;
         _project.EndDate = entity.EndDate;
-        _project.ServicesId = entity.ServiceId;
         _project.ServiceCost = entity.ServiceCost;
         _project.Status = StatusFactory.Create(entity.Status);
         _project.Service = ServiceFactory.Create(entity.Service);
         _project.Manager = EmployeeFactory.Create(entity.Employee);
         _project.Customer = CustomerFactory.Create(entity.Customer);
-        
+
+        if (entity.ServiceId != null)
+        {
+            _project.ServicesId = (int)entity.ServiceId;
+        }else
+            _project.ServicesId = 0;
+        if (entity.CustomerId != null)
+        {
+            _project.CustomerId = (int)entity.CustomerId;
+        }
+        else
+            _project.CustomerId = 0;
+        if (entity.EmployeeId != null)
+        {
+            _project.ManagerId = (int)entity.EmployeeId;
+        }
+        else
+            _project.ManagerId = 0;
+
         return _project;
     }
 
