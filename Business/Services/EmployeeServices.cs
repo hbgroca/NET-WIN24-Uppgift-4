@@ -4,6 +4,7 @@ using Business.Interfaces;
 using Business.Models;
 using Data.Entities;
 using Data.Interfaces;
+using System.Diagnostics;
 
 namespace Business.Services;
 
@@ -13,15 +14,34 @@ public class EmployeeServices(IEmployeeRepository repository) : IEmployeeService
 
     public async Task<Employee> CreateAsync(EmployeeRegistrationForm form)
     {
-        // Remap to entity
-        EmployeeEntity entity = EmployeeFactory.Create(form);
+        if (form == null)
+            return null!;
 
-        // Add to db
-        var result = await _employeeRepository.CreateAsync(entity);
-        if (result != null)
-            return EmployeeFactory.Create(result);
+        // Begin transaction
+        await _employeeRepository.BeginTransactionAsync();
 
-        return null!;
+        try
+        {
+            // Remap dto to entity and add to db
+            await _employeeRepository.CreateAsync(EmployeeFactory.Create(form));
+            // Save changes
+            await _employeeRepository.SaveAsync();
+            // Commit transaction
+            await _employeeRepository.CommitTransactionAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            // Rollback transaction if error
+            await _employeeRepository.RollbackTransactionAsync();
+            return null!;
+        }
+
+        // Get entity from db, would like to use ID instead of name and use Guid set in service.
+        // But we need the db to autoincrement the ID for this assignment.
+        var entity = await _employeeRepository.GetAsync(x => x.Email == form.Email);
+
+        return EmployeeFactory.Create(entity!) ?? null!;
     }
 
     public async Task<IEnumerable<Employee>> GetAllAsync()
@@ -41,21 +61,69 @@ public class EmployeeServices(IEmployeeRepository repository) : IEmployeeService
     // Update
     public async Task<Employee> Update(Employee employee)
     {
-        // Remap to entity
-        EmployeeEntity entity = EmployeeFactory.Create(employee);
-        //Update in db
-        EmployeeEntity result = await _employeeRepository.UpdateAsync(x => x.Id == entity.Id, entity);
-        if (result != null)
-        {
-            return EmployeeFactory.Create(result);
-        }
+        // Begin transaction
+        await _employeeRepository.BeginTransactionAsync();
 
-        return null!;
+        try
+        {
+            // Get entity from db
+            var entity = await _employeeRepository.GetAsync(x => x.Id == employee.Id);
+            if (entity == null)
+                throw new Exception("Employee not found");
+
+            // Set new values
+            entity = EmployeeFactory.Update(employee, entity);
+
+            // Update in dbset
+            var result = _employeeRepository.Update(entity);
+            if (!result)
+                throw new Exception("Error updating employee");
+
+            // Save changes
+            await _employeeRepository.SaveAsync();
+
+            // Commit transaction
+            await _employeeRepository.CommitTransactionAsync();
+
+            return employee;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            // Rollback transaction if error
+            await _employeeRepository.RollbackTransactionAsync();
+            return null!;
+        }
     }
 
     // Delete
     public async Task<bool> Delete(Employee employee)
     {
-        return await _employeeRepository.DeleteAsync(x => x.Id == employee.Id);
+        // Begin transaction
+        await _employeeRepository.BeginTransactionAsync();
+
+        try
+        {
+            // Get entity from db
+            var entity = await _employeeRepository.GetAsync(x => x.Id == employee.Id);
+            if (entity == null)
+                throw new Exception("Employee not found");
+
+            // Delete from dbset
+            _employeeRepository.Delete(entity);
+            // Save changes
+            await _employeeRepository.SaveAsync();
+            // Commit transaction
+            await _employeeRepository.CommitTransactionAsync();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            // Rollback transaction if error
+            await _employeeRepository.RollbackTransactionAsync();
+            return false;
+        }
     }
 }

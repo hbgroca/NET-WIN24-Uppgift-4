@@ -66,8 +66,7 @@ namespace Data_Test.Repositories
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(1, result.Id);
-            Assert.Equal(projectEntity.ProjectName, result.ProjectName);
+            Assert.True(result);
         }
 
         [Fact]
@@ -142,15 +141,17 @@ namespace Data_Test.Repositories
         public async Task UpdateAsync_ShoudReturnUpdatedEntity_WhenSuppliedWithEntity()
         {
             // Arrange
+            // Add a new entity to the database
             var result = await _projectRepository.CreateAsync(projectEntity);
 
             // Act
-            result.ProjectName = "Robbans Webpage Project";
-            var updatedResult = await _projectRepository.UpdateAsync(e => e.Id == result.Id, result);
-
+            projectEntity.ProjectName = "Robbans Webpage Project";
+            var updatedResult = _projectRepository.Update(projectEntity);
+            var xa = await _projectRepository.GetAsync(p => p.Id == projectEntity.Id);
+            
             // Assert
-            Assert.NotNull(updatedResult);
-            Assert.Equal("Robbans Webpage Project", updatedResult.ProjectName);
+            Assert.NotNull(result);
+            Assert.Equal("Robbans Webpage Project", xa.ProjectName);
         }
 
 
@@ -161,7 +162,7 @@ namespace Data_Test.Repositories
             await _projectRepository.CreateAsync(projectEntity);
 
             // Act
-            var result = await _projectRepository.DeleteAsync(e => e.Id == 1);
+            var result = _projectRepository.Delete(projectEntity);
 
             // Assert
             Assert.True(result);

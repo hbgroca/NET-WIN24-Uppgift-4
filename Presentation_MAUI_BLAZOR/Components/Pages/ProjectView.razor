@@ -1,5 +1,5 @@
 ﻿@page "/projectview/{Id:int}"
-@* CoPilot helped me out with the back to previus page, could't figure it out on my own. *@
+@* CoPilot helped me out with the method to get back to previus page, could't figure it out on my own. *@
 @inject IJSRuntime JSRuntime
 
 <div class="top-bar">
@@ -129,7 +129,7 @@
                         <h4>P-@_project.Id</h4>
                         @if(!deleteConfirmOpened)
                         {
-                            <span @onclick="async () => await SaveProject()">save</span>
+                            <span @onclick="async () => await InvokeAsync(SaveProject)">save</span>
                             <span @onclick="()=>{deleteConfirmOpened = !deleteConfirmOpened;}">delete</span>
                         }
                         else
@@ -270,7 +270,7 @@ else
         Project result = await _projectService.UpdateProject(_project);
         if (result != null)
         {
-            _project = result;
+            _project = result; 
         }
     }
 

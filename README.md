@@ -1,6 +1,12 @@
 # .NET-WIN24-Uppgift-4 
 
-Inlämningsuppgift 4 - Datalagring &#10003;
+Min vy på uppgiften
+- Denna uppgift har varit väldigt rolig men samtidigt lite snurrigt med så många filer att hålla reda på. Det tog en stund att förstå sig på relationerna med entity framework men efter några test-projekt så har jag fått klämm på det också. I detta projektet så används bara En till Många relationer då det inte behövs något mer med den databas struktur jag skapat. 
+Jag hoppas att du tycker om min kod och blundar för min design. Det är tur jag inte går en UX utbildning... 
+
+
+
+Inlämningsuppgift 4 - Datalagring
 - I denna inlämningsuppgift ska du bygga en applikation som kommunicerar med en databas med hjälp av C# och .NET. Du väljer själv vilken applikationsform du vill använda: Console, WPF/Avalonia WPF, MAUI, eller React. Varje applikationsplattform har sina egna styrkor och utmaningar. Det är ditt ansvar att utvärdera vilken plattform som bäst uppfyller kraven för godkänt eller väl godkänt.
 Observera att vissa plattformar, exempelvis React eller MAUI, kan kräva att du implementerar ett Web API (med ASP.NET Core) för att hantera kommunikationen mellan frontend och backend. Du får använda ett Web API oavsett plattform, men det är inget krav och påverkar inte betygsättningen.
 

@@ -57,7 +57,7 @@ public class ProjectRepository_Test
         await _context.SaveChangesAsync();
 
         // Act
-        var result = await _projectRepository.GetProjectsAsync();
+        var result = await _projectRepository.GetAllAsync();
 
         // Assert
         Assert.NotNull(result);
@@ -77,7 +77,7 @@ public class ProjectRepository_Test
         await _context.SaveChangesAsync();
 
         // Act
-        var result = await _projectRepository.GetProjectAsync(proj => proj.Customer.FirstName == "Oskar");
+        var result = await _projectRepository.GetAsync(proj => proj.Customer.FirstName == "Oskar");
 
         // Assert
         Assert.NotNull(result);

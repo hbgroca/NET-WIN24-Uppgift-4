@@ -2,38 +2,38 @@
 @if (projects.Count() > 0)
 {
     <div class="home-container">
-  
+
         <h4>Projects In Progress</h4>
         <div class="projects-container">
-          @foreach (var project in projects)
-          {
-              if (project.Status?.StatusDescription == "In Progress")
-              {
-                  <ProjectCard Project="project"/>
-              }
-          }
+            @foreach (var project in projects)
+            {
+                if (project.Status?.StatusDescription == "In Progress")
+                {
+                    <ProjectCard Project="project"/>
+                }
+            }
         </div>
 
         <h4>Projects Not Started</h4>
         <div class="projects-container">
-          @foreach (var project in projects)
-          {
-              if(project.Status?.StatusDescription == "Not Started")
-              {
-                  <ProjectCard Project="project"/>
-              }
-          }
+            @foreach (var project in projects)
+            {
+                if(project.Status?.StatusDescription == "Not Started")
+                {
+                    <ProjectCard Project="project"/>
+                }
+            }
         </div>
 
         <h4>Projects Finished</h4>
         <div class="projects-container">
-          @foreach (var project in projects)
-          {
-              if (project.Status?.StatusDescription == "Finished")
-              {
-                  <ProjectCard Project="project"/>
-              }
-          }
+            @foreach (var project in projects)
+            {
+                if (project.Status?.StatusDescription == "Completed")
+                {
+                    <ProjectCard Project="project"/>
+                }
+            }
         </div>
     </div>
 }
@@ -55,7 +55,8 @@ else
 
     private async Task UpdateProjectList()
     {
-        projects = await _projectService.GetAllProjectsAsync();
+        var x = await _projectService.GetAllProjectsAsync();
+        projects = x;
     }
 
     private void NavigateToProjectRegister()

@@ -57,6 +57,7 @@ public static class ProjectFactory
         return _project;
     }
 
+
     public static ProjectEntity UpdateEntity(Project project, ProjectEntity entity)
     {
         entity.ProjectName = project.Name;
@@ -68,6 +69,17 @@ public static class ProjectFactory
         entity.StatusId = project.StatusId;
         entity.Description = project.Description;
         entity.ServiceCost = project.ServiceCost;
+
+
+
+        entity.Service = ServiceFactory.Create(project.Service!);
+        entity.Status = StatusFactory.Create(project.Status!);
+        entity.Customer = CustomerFactory.Create(project.Customer!);
+        entity.Employee = EmployeeFactory.Create(project.Manager!);
+
+
+
+        entity.Employee = EmployeeFactory.Create(project.Manager!);
 
         return entity;
     }

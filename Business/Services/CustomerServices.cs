@@ -2,8 +2,8 @@
 using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
-using Data.Entities;
 using Data.Interfaces;
+using System.Diagnostics;
 
 namespace Business.Services;
 
@@ -15,15 +15,32 @@ public class CustomerServices(ICustomerRepository repository) : ICustomerService
     // Create
     public async Task<Customer> CreateAsync(CustomerRegistrationForm form)
     {
-        // Remap
-        CustomerEntity entity = CustomerFactory.Create(form);
+        if (form == null)
+            return null!;
 
-        // Add to db
-        var result = await _customerRepository.CreateAsync(entity);
+        // Begin transaction
+        await _customerRepository.BeginTransactionAsync();
 
-        if (result != null)
-            return CustomerFactory.Create(result);
-        return null!;
+        try
+        {
+            // Remap dto to entity and add to db
+            await _customerRepository.CreateAsync(CustomerFactory.Create(form));
+            // Save changes
+            await _customerRepository.SaveAsync();
+            // Commit transaction
+            await _customerRepository.CommitTransactionAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            // Rollback transaction if error
+            await _customerRepository.RollbackTransactionAsync();
+            return null!;
+        }
+
+        var customer = await _customerRepository.GetAsync(x => x.Email == form.Email);
+
+        return CustomerFactory.Create(customer!) ?? null!;
     }
 
     // Read
@@ -45,22 +62,65 @@ public class CustomerServices(ICustomerRepository repository) : ICustomerService
     // Update
     public async Task<Customer> Update(Customer customer)
     {
-        // Remap to customer entity
-        CustomerEntity entity = CustomerFactory.Create(customer);
-        // Update the customer in db
-        CustomerEntity result = await _customerRepository.UpdateAsync(x=>x.Id == entity.Id ,entity);
-        if(result != null)
-        {
-            // Remap to customer model
-            return CustomerFactory.Create(result);
-        }
+        // Begin transaction
+        await _customerRepository.BeginTransactionAsync();
 
-        return null!;
+        try
+        {
+            // Get entity from db
+            var entity = await _customerRepository.GetAsync(x => x.Id == customer.Id);
+            if (entity == null)
+                throw new Exception("Customer not found");
+
+            // Remap to customer entity
+            entity = CustomerFactory.Update(customer, entity);
+            // Update in dbset
+            var result = _customerRepository.Update(entity);
+            if (!result)
+                throw new Exception("Error when updating customer");
+            // Save changes
+            await _customerRepository.SaveAsync();
+            // Commit transaction
+            await _customerRepository.CommitTransactionAsync();
+
+            return customer;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            // Rollback transaction if error
+            await _customerRepository.RollbackTransactionAsync();
+            return null!;
+        }
     }
 
     // Delete
     public async Task<bool> Delete(Customer customer)
     {
-        return await _customerRepository.DeleteAsync(x=>x.Id == customer.Id);
+        // Begin transaction
+        await _customerRepository.BeginTransactionAsync();
+
+        try
+        {
+            // Get entity from db
+            var entity = await _customerRepository.GetAsync(x => x.Id == customer.Id);
+            if (entity == null)
+                throw new Exception("Customer not found");
+            // Delete from dbset
+            _customerRepository.Delete(entity);
+            // Save changes
+            await _customerRepository.SaveAsync();
+            // Commit transaction
+            await _customerRepository.CommitTransactionAsync();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            // Rollback transaction if error
+            await _customerRepository.RollbackTransactionAsync();
+            return false;
+        }
     }
 }

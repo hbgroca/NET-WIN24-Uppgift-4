@@ -55,4 +55,20 @@ public static class CustomerFactory
             PhoneNumber = customer.Phone,
         };
     }
+
+    public static CustomerEntity Update(Customer customer, CustomerEntity entity)
+    {
+        if (customer == null || entity == null)
+            return null!;
+
+        entity.Id = customer.Id;
+        entity.CompanyNr = customer.OrganisationNumber;
+        entity.CompanyName = customer.CompanyName;
+        entity.FirstName = customer.FirstName!;
+        entity.LastName = customer.LastName!;
+        entity.Email = customer.Email!;
+        entity.PhoneNumber = customer.Phone;
+
+        return entity;
+    }
 }

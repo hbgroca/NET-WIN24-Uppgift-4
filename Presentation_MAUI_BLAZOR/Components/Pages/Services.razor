@@ -57,13 +57,13 @@
                         @if (!deleteConfirmEnabled)
                         {
                         <button @onclick="async ()=>{await SaveUpdatedToDb(service);}">Save</button>
-                            <button @onclick="async ()=>{await UpdateCustomerList();}">Cancel</button>
+                            <button @onclick="async ()=>{await UpdateServiceList();}">Cancel</button>
                             <button @onclick="()=>{deleteConfirmEnabled = true;}">Remove</button>
                         }
                         else
                         {
                             <p>Confirm delete</p>
-                        <button @onclick="async ()=>{await RemoveCustomer(service);}">Remove</button>
+                        <button @onclick="async ()=>{await RemoveService(service);}">Remove</button>
                             <button @onclick="()=>{deleteConfirmEnabled = false;}">Cancel</button>
                         }
                     </td>
@@ -71,9 +71,9 @@
                 else
                 {
                     <tr class="hover-darken">
-                        <td @onclick="()=>{ToogleSelectedCustomer(service);}">@service.Id</td>
-                        <td @onclick="()=>{ToogleSelectedCustomer(service);}">@service.Name</td>
-                    <td @onclick="()=>{ToogleSelectedCustomer(service);}">@decimal.Round(service.PricePerHour,2)$</td>
+                        <td @onclick="()=>{ToogleSelectedService(service);}">@service.Id</td>
+                        <td @onclick="()=>{ToogleSelectedService(service);}">@service.Name</td>
+                    <td @onclick="()=>{ToogleSelectedService(service);}">@decimal.Round(service.PricePerHour,2)$</td>
                         <td><button @onclick="()=>{editModeEnabled = true; selectedService = service;}">Modify</button></td>
                     </tr>
                 }
@@ -97,10 +97,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await UpdateCustomerList();
+        await UpdateServiceList();
     }
 
-    private void ToogleSelectedCustomer(Service service)
+    private void ToogleSelectedService(Service service)
     {
         if (selectedService == service)
         {
@@ -110,7 +110,7 @@
             selectedService = service;
     }
 
-    private async Task UpdateCustomerList()
+    private async Task UpdateServiceList()
     {
         deleteConfirmEnabled = false;
         editModeEnabled = false;
@@ -128,7 +128,7 @@
         if (result != null)
         {
             ServiceAdded();
-            await UpdateCustomerList();
+            await UpdateServiceList();
         }
     }
 
@@ -190,17 +190,17 @@
             return;
 
         await _serviceService.Update(service);
-        await UpdateCustomerList();
+        await UpdateServiceList();
         editModeEnabled = false;
         selectedService = null!;
     }
 
-    private async Task RemoveCustomer(Service service)
+    private async Task RemoveService(Service service)
     {
         await _serviceService.Delete(service);
         editModeEnabled = false;
         selectedService = null!;
-        await UpdateCustomerList();
+        await UpdateServiceList();
     }
 
     private void NavigateToProject(int projectId)

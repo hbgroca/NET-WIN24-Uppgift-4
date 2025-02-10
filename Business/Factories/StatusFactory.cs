@@ -16,4 +16,16 @@ public static class StatusFactory
             StatusDescription = entity.StatusDescription
         };
     }
+
+    public static StatusEntity Create(Status model)
+    {
+        if (model == null)
+            return null!;
+
+        return new StatusEntity
+        {
+            Id = model.Id,
+            StatusDescription = model.StatusDescription
+        };
+    }
 }

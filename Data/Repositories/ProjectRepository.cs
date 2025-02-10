@@ -7,7 +7,7 @@ namespace Data.Repositories;
 
 public class ProjectRepository(DataContext context) : BaseRepository<ProjectEntity>(context), IProjectRepository
 {
-    public async Task<IEnumerable<ProjectEntity>> GetProjectsAsync()
+    public override async Task<IEnumerable<ProjectEntity>> GetAllAsync()
     {
         return await _context.Projects
             .Include(p => p.Status)
@@ -17,7 +17,7 @@ public class ProjectRepository(DataContext context) : BaseRepository<ProjectEnti
             .ToListAsync();
     }
 
-    public async Task<ProjectEntity> GetProjectAsync(Expression<Func<ProjectEntity, bool>> expression)
+    public override async Task<ProjectEntity?> GetAsync(Expression<Func<ProjectEntity, bool>> expression)
     {
         // Method for testing. Wierd bug
         var entity = await _context.Projects
@@ -28,6 +28,6 @@ public class ProjectRepository(DataContext context) : BaseRepository<ProjectEnti
             .Include(x => x.Service)
             .FirstOrDefaultAsync();
 
-        return entity ?? null!; 
+        return entity ?? null!;
     }
 }

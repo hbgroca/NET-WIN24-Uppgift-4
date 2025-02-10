@@ -41,4 +41,16 @@ public static class ServiceFactory
             Price = service.PricePerHour
         };
     }
+
+    public static ServiceEntity Update(Service service, ServiceEntity entity)
+    {
+        if (service == null || entity == null)
+            return null!;
+
+        entity.Id = service.Id;
+        entity.ServiceName = service.Name;
+        entity.Price = service.PricePerHour;
+
+        return entity;
+    }
 }

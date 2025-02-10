@@ -2,8 +2,8 @@
 using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
-using Data.Entities;
 using Data.Interfaces;
+using System.Diagnostics;
 
 namespace Business.Services
 {
@@ -14,15 +14,32 @@ namespace Business.Services
         // Create
         public async Task<Service> CreateAsync(ServiceRegistrationForm form)
         {
-            // Remap to entity
-            ServiceEntity entity = ServiceFactory.Create(form);
+            if (form == null)
+                return null!;
 
-            // Add to db
-            var result = await _serviceRepositrory.CreateAsync(entity);
+            // Begin transaction
+            await _serviceRepositrory.BeginTransactionAsync();
 
-            if (result != null)
-                return ServiceFactory.Create(result);
-            return null!;
+            try
+            {
+                // Remap dto to entity and add to db
+                await _serviceRepositrory.CreateAsync(ServiceFactory.Create(form));
+                // Save changes
+                await _serviceRepositrory.SaveAsync();
+                // Commit transaction
+                await _serviceRepositrory.CommitTransactionAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                // Rollback transaction if error
+                await _serviceRepositrory.RollbackTransactionAsync();
+                return null!;
+            }
+
+            // Get entity from db 
+            var entity = await _serviceRepositrory.GetAsync(x => x.ServiceName == form.Name);
+            return ServiceFactory.Create(entity!) ?? null!;
         }
 
         // Read
@@ -40,22 +57,66 @@ namespace Business.Services
         // Update
         public async Task<Service> Update(Service service)
         {
-            // Remap to entity
-            ServiceEntity entity = ServiceFactory.Create(service);
-            // Update in db
-            ServiceEntity result = await _serviceRepositrory.UpdateAsync(x => x.Id == entity.Id, entity);
-            if (result != null)
-            {
-                return ServiceFactory.Create(result);
-            }
+            // Begin transaction
+            await _serviceRepositrory.BeginTransactionAsync();
 
-            return null!;
+            try
+            {
+                // Get entity from db
+                var entity = await _serviceRepositrory.GetAsync(x => x.Id == service.Id);
+                if (entity == null)
+                    throw new Exception("Customer not found");
+
+                // Remap from project to entity
+                entity = ServiceFactory.Update(service, entity);
+                // Update in dbset
+                var result = _serviceRepositrory.Update(entity);
+                if (!result)
+                    throw new Exception("Error when updating services");
+                // Save changes
+                await _serviceRepositrory.SaveAsync();
+                // Commit transaction
+                await _serviceRepositrory.CommitTransactionAsync();
+
+                return service;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                // Rollback transaction if error
+                await _serviceRepositrory.RollbackTransactionAsync();
+                return null!;
+            }
         }
 
         // Delete
         public async Task<bool> Delete(Service service)
         {
-            return await _serviceRepositrory.DeleteAsync(x => x.Id == service.Id);
+            // Begin transaction
+            await _serviceRepositrory.BeginTransactionAsync();
+
+            try
+            {
+                // Get entity from db
+                var entity = await _serviceRepositrory.GetAsync(x => x.Id == service.Id);
+                if (entity == null)
+                    throw new Exception("Service not found");
+                // Delete from dbset
+                _serviceRepositrory.Delete(entity);
+                // Save changes
+                await _serviceRepositrory.SaveAsync();
+                // Commit transaction
+                await _serviceRepositrory.CommitTransactionAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                // Rollback transaction if error
+                await _serviceRepositrory.RollbackTransactionAsync();
+                return false;
+            }
         }
     }
 }

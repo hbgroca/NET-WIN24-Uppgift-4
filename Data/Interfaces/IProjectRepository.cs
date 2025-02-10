@@ -4,6 +4,8 @@ using System.Linq.Expressions;
 namespace Data.Interfaces;
 public interface IProjectRepository : IBaseRepository<ProjectEntity>
 {
-    Task<ProjectEntity> GetProjectAsync(Expression<Func<ProjectEntity, bool>> expression);
-    Task<IEnumerable<ProjectEntity>> GetProjectsAsync();
+    new Task<IEnumerable<ProjectEntity>> GetAllAsync();
+    new Task<ProjectEntity?> GetAsync(Expression<Func<ProjectEntity, bool>> expression);
+    //Task<ProjectEntity> GetProjectAsync(Expression<Func<ProjectEntity, bool>> expression);
+    //Task<IEnumerable<ProjectEntity>> GetProjectsAsync();
 }
