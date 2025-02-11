@@ -6,6 +6,9 @@ public class ServiceEntity
 {
     [Key]
     public int Id { get; set; }
+
+    [Column(TypeName = "nvarchar(125)")]
     public string ServiceName { get; set; } = null!;
+
     public decimal Price { get; set; }
 }

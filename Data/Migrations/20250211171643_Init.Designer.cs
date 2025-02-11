@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250207152718_INIT")]
-    partial class INIT
+    [Migration("20250211171643_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,24 +30,24 @@ namespace Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 100L);
 
                     b.Property<string>("CompanyName")
                         .HasColumnType("nvarchar(125)");
 
                     b.Property<string>("CompanyNr")
-                        .HasColumnType("nvarchar(125)");
+                        .HasColumnType("nvarchar(16)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("nvarchar(125)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(125)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(125)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(25)");
@@ -65,7 +65,7 @@ namespace Data.Migrations
                             Email = "nustrulardetigen@helvetes.net",
                             FirstName = "Robban",
                             LastName = "Carlsson",
-                            PhoneNumber = "555-123456"
+                            PhoneNumber = "555123456"
                         },
                         new
                         {
@@ -73,7 +73,7 @@ namespace Data.Migrations
                             Email = "sara.syntax@domain.net",
                             FirstName = "Sara",
                             LastName = "Syntax",
-                            PhoneNumber = "555-654321"
+                            PhoneNumber = "555654321"
                         },
                         new
                         {
@@ -81,7 +81,7 @@ namespace Data.Migrations
                             Email = "mackan.nilsson@domain.net",
                             FirstName = "Markus",
                             LastName = "Nilsson",
-                            PhoneNumber = "555-123456"
+                            PhoneNumber = "555123456"
                         },
                         new
                         {
@@ -89,7 +89,7 @@ namespace Data.Migrations
                             Email = "henke@domain.net",
                             FirstName = "Henrik",
                             LastName = "Rosengren",
-                            PhoneNumber = "555-123456"
+                            PhoneNumber = "555123456"
                         });
                 });
 
@@ -99,22 +99,22 @@ namespace Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 100L);
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(125)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(25)");
 
                     b.HasKey("Id");
 
@@ -194,6 +194,68 @@ namespace Data.Migrations
                     b.HasIndex("StatusId");
 
                     b.ToTable("Projects");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CustomerId = 1,
+                            EmployeeId = 1,
+                            EndDate = new DateOnly(2025, 4, 1),
+                            ProjectName = "Build database 4 client",
+                            ServiceCost = 6500m,
+                            ServiceId = 4,
+                            StartDate = new DateOnly(2025, 2, 1),
+                            StatusId = 2
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CustomerId = 4,
+                            EmployeeId = 1,
+                            EndDate = new DateOnly(2026, 5, 29),
+                            ProjectName = "Hang out with Robban",
+                            ServiceCost = 0m,
+                            ServiceId = 2,
+                            StartDate = new DateOnly(2024, 8, 26),
+                            StatusId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CustomerId = 2,
+                            EmployeeId = 3,
+                            EndDate = new DateOnly(2025, 8, 31),
+                            ProjectName = "Build TodoApp",
+                            ServiceCost = 9000m,
+                            ServiceId = 6,
+                            StartDate = new DateOnly(2025, 4, 1),
+                            StatusId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CustomerId = 2,
+                            EmployeeId = 2,
+                            EndDate = new DateOnly(2025, 1, 31),
+                            ProjectName = "Update business webpage",
+                            ServiceCost = 4400m,
+                            ServiceId = 2,
+                            StartDate = new DateOnly(2024, 12, 1),
+                            StatusId = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CustomerId = 3,
+                            EmployeeId = 3,
+                            EndDate = new DateOnly(2025, 1, 31),
+                            ProjectName = "Optimise services",
+                            ServiceCost = 3790m,
+                            ServiceId = 4,
+                            StartDate = new DateOnly(2024, 12, 1),
+                            StatusId = 1
+                        });
                 });
 
             modelBuilder.Entity("Data.Entities.ServiceEntity", b =>
@@ -202,14 +264,14 @@ namespace Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 100L);
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ServiceName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(125)");
 
                     b.HasKey("Id");
 
@@ -291,19 +353,16 @@ namespace Data.Migrations
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
                 {
                     b.HasOne("Data.Entities.CustomerEntity", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .WithMany("Projects")
+                        .HasForeignKey("CustomerId");
 
                     b.HasOne("Data.Entities.EmployeeEntity", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .WithMany("Projects")
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("Data.Entities.ServiceEntity", "Service")
                         .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("ServiceId");
 
                     b.HasOne("Data.Entities.StatusEntity", "Status")
                         .WithMany()
@@ -318,6 +377,16 @@ namespace Data.Migrations
                     b.Navigation("Service");
 
                     b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("Data.Entities.CustomerEntity", b =>
+                {
+                    b.Navigation("Projects");
+                });
+
+            modelBuilder.Entity("Data.Entities.EmployeeEntity", b =>
+                {
+                    b.Navigation("Projects");
                 });
 #pragma warning restore 612, 618
         }

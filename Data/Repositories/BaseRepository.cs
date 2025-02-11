@@ -46,8 +46,9 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
             var result = await _context.SaveChangesAsync();
             return result;
         }
-        catch
+        catch(Exception ex)
         {
+            Debug.WriteLine($"CreateAsync - Error saving entity: {ex}");
             return -1;
         }
     }

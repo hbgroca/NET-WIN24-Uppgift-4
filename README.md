@@ -53,7 +53,7 @@ Ett klassbibliotek med följande:
 - Tillämpa SOLID-principer där det är lämpligt. &#10003;
 - Tillämpa Factories. &#10003;
 - Task ska tillämpas där det är lämpligt genom att använda asynkrona metoder och async/await, t.ex. vid databasoperationer. &#10003;
-- Tillämpa Transaction Management för att hantera flera beroende operationer som en transaktion, inklusive rollback vid fel.
+- Tillämpa Transaction Management för att hantera flera beroende operationer som en transaktion, inklusive rollback vid fel. &#10003;
 
 Utöver dessa kriterier så har jag
 - Skapat test för services, factories, repositories.

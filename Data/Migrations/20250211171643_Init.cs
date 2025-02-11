@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Data.Migrations
 {
     /// <inheritdoc />
-    public partial class INIT : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,13 +18,13 @@ namespace Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CompanyNr = table.Column<string>(type: "nvarchar(125)", nullable: true),
+                        .Annotation("SqlServer:Identity", "100, 1"),
+                    CompanyNr = table.Column<string>(type: "nvarchar(16)", nullable: true),
                     CompanyName = table.Column<string>(type: "nvarchar(125)", nullable: true),
-                    FirstName = table.Column<string>(type: "nvarchar(125)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(125)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(45)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(45)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(25)", nullable: true),
-                    Email = table.Column<string>(type: "varchar(150)", nullable: true)
+                    Email = table.Column<string>(type: "nvarchar(125)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -36,11 +36,11 @@ namespace Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                        .Annotation("SqlServer:Identity", "100, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(45)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(45)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(125)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(25)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -52,8 +52,8 @@ namespace Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ServiceName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                        .Annotation("SqlServer:Identity", "100, 1"),
+                    ServiceName = table.Column<string>(type: "nvarchar(125)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
@@ -121,10 +121,10 @@ namespace Data.Migrations
                 columns: new[] { "Id", "CompanyName", "CompanyNr", "Email", "FirstName", "LastName", "PhoneNumber" },
                 values: new object[,]
                 {
-                    { 1, "Töm & Glöm AB", "556501-1234", "nustrulardetigen@helvetes.net", "Robban", "Carlsson", "555-123456" },
-                    { 2, null, null, "sara.syntax@domain.net", "Sara", "Syntax", "555-654321" },
-                    { 3, null, null, "mackan.nilsson@domain.net", "Markus", "Nilsson", "555-123456" },
-                    { 4, null, null, "henke@domain.net", "Henrik", "Rosengren", "555-123456" }
+                    { 1, "Töm & Glöm AB", "556501-1234", "nustrulardetigen@helvetes.net", "Robban", "Carlsson", "555123456" },
+                    { 2, null, null, "sara.syntax@domain.net", "Sara", "Syntax", "555654321" },
+                    { 3, null, null, "mackan.nilsson@domain.net", "Markus", "Nilsson", "555123456" },
+                    { 4, null, null, "henke@domain.net", "Henrik", "Rosengren", "555123456" }
                 });
 
             migrationBuilder.InsertData(
@@ -158,6 +158,18 @@ namespace Data.Migrations
                     { 1, "Completed" },
                     { 2, "In Progress" },
                     { 3, "Not Started" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Projects",
+                columns: new[] { "Id", "CustomerId", "Description", "EmployeeId", "EndDate", "ProjectName", "ServiceCost", "ServiceId", "StartDate", "StatusId" },
+                values: new object[,]
+                {
+                    { 1, 1, null, 1, new DateOnly(2025, 4, 1), "Build database 4 client", 6500m, 4, new DateOnly(2025, 2, 1), 2 },
+                    { 2, 4, null, 1, new DateOnly(2026, 5, 29), "Hang out with Robban", 0m, 2, new DateOnly(2024, 8, 26), 2 },
+                    { 3, 2, null, 3, new DateOnly(2025, 8, 31), "Build TodoApp", 9000m, 6, new DateOnly(2025, 4, 1), 3 },
+                    { 4, 2, null, 2, new DateOnly(2025, 1, 31), "Update business webpage", 4400m, 2, new DateOnly(2024, 12, 1), 1 },
+                    { 5, 3, null, 3, new DateOnly(2025, 1, 31), "Optimise services", 3790m, 4, new DateOnly(2024, 12, 1), 1 }
                 });
 
             migrationBuilder.CreateIndex(

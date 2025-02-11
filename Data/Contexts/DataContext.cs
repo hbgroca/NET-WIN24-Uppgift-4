@@ -11,11 +11,6 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
     public DbSet<EmployeeEntity> Employees { get; set; }
 
     // Overrides
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        //// In Memory cache, to increase performance
-        //optionsBuilder.EnableServiceProviderCaching();
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -23,27 +18,15 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
         modelBuilder.Entity<ProjectEntity>()
             .Property(p => p.Id)
             .UseIdentityColumn(100, 1);
-
-
-        // No action so we can delete entity without deleting the project.
-        modelBuilder.Entity<ProjectEntity>()
-            .HasOne(p => p.Customer)
-            .WithMany()
-            .HasForeignKey(p => p.CustomerId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        modelBuilder.Entity<ProjectEntity>()
-            .HasOne(p => p.Employee)
-            .WithMany()
-            .HasForeignKey(p => p.EmployeeId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        modelBuilder.Entity<ProjectEntity>()
-            .HasOne(p => p.Service)
-            .WithMany()
-            .HasForeignKey(p => p.ServiceId)
-            .OnDelete(DeleteBehavior.NoAction);
-
+        modelBuilder.Entity<EmployeeEntity>()
+            .Property(p => p.Id)
+            .UseIdentityColumn(100, 1);
+        modelBuilder.Entity<CustomerEntity>()
+            .Property(p => p.Id)
+            .UseIdentityColumn(100, 1);
+        modelBuilder.Entity<ServiceEntity>()
+            .Property(p => p.Id)
+            .UseIdentityColumn(100, 1);
 
         modelBuilder.Entity<StatusEntity>()
             .HasData(
@@ -61,10 +44,10 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
 
         modelBuilder.Entity<CustomerEntity>()
             .HasData(
-                new CustomerEntity { Id = 1, CompanyNr="556501-1234", CompanyName="Töm & Glöm AB", FirstName = "Robban", LastName = "Carlsson", Email = "nustrulardetigen@helvetes.net", PhoneNumber = "555-123456" },
-                new CustomerEntity { Id = 2, FirstName = "Sara", LastName = "Syntax", Email = "sara.syntax@domain.net", PhoneNumber = "555-654321" },
-                new CustomerEntity { Id = 3, FirstName = "Markus", LastName = "Nilsson", Email = "mackan.nilsson@domain.net", PhoneNumber = "555-123456" },
-                new CustomerEntity { Id = 4, FirstName = "Henrik", LastName = "Rosengren", Email = "henke@domain.net", PhoneNumber = "555-123456" }
+                new CustomerEntity { Id = 1, CompanyNr="556501-1234", CompanyName="Töm & Glöm AB", FirstName = "Robban", LastName = "Carlsson", Email = "nustrulardetigen@helvetes.net", PhoneNumber = "555123456" },
+                new CustomerEntity { Id = 2, FirstName = "Sara", LastName = "Syntax", Email = "sara.syntax@domain.net", PhoneNumber = "555654321" },
+                new CustomerEntity { Id = 3, FirstName = "Markus", LastName = "Nilsson", Email = "mackan.nilsson@domain.net", PhoneNumber = "555123456" },
+                new CustomerEntity { Id = 4, FirstName = "Henrik", LastName = "Rosengren", Email = "henke@domain.net", PhoneNumber = "555123456" }
             );
 
         modelBuilder.Entity<ServiceEntity>()
@@ -75,6 +58,69 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
                 new ServiceEntity { Id = 4, ServiceName = "Database Development", Price = 145 },
                 new ServiceEntity { Id = 5, ServiceName = "Backend Performance", Price = 140 },
                 new ServiceEntity { Id = 6, ServiceName = "Hang out", Price = 0 }
+            );
+        modelBuilder.Entity<ProjectEntity>()
+            .HasData(
+                new ProjectEntity 
+                {
+                    Id = 1,
+                    ProjectName = "Build database 4 client", 
+                    ServiceCost = 6500,
+                    StartDate = new DateOnly(2025, 2, 1),
+                    EndDate = new DateOnly(2025, 4, 01),
+                    EmployeeId = 1,
+                    CustomerId = 1,
+                    StatusId = 2,
+                    ServiceId = 4
+                },
+                new ProjectEntity
+                {
+                    Id = 2,
+                    ProjectName = "Hang out with Robban",
+                    ServiceCost = 0,
+                    StartDate = new DateOnly(2024, 08, 26),
+                    EndDate = new DateOnly(2026, 05, 29),
+                    EmployeeId = 1,
+                    CustomerId = 4,
+                    StatusId = 2,
+                    ServiceId = 2
+                },
+                new ProjectEntity
+                {
+                    Id = 3,
+                    ProjectName = "Build TodoApp",
+                    ServiceCost = 9000,
+                    StartDate = new DateOnly(2025, 04, 01),
+                    EndDate = new DateOnly(2025, 08, 31),
+                    EmployeeId = 3,
+                    CustomerId = 2,
+                    StatusId = 3,
+                    ServiceId = 6
+                },
+                new ProjectEntity
+                {
+                    Id = 4,
+                    ProjectName = "Update business webpage",
+                    ServiceCost = 4400,
+                    StartDate = new DateOnly(2024, 12, 1),
+                    EndDate = new DateOnly(2025, 01, 31),
+                    EmployeeId = 2,
+                    CustomerId = 2,
+                    StatusId = 1,
+                    ServiceId = 2
+                },
+                new ProjectEntity
+                {
+                    Id = 5,
+                    ProjectName = "Optimise services",
+                    ServiceCost = 3790,
+                    StartDate = new DateOnly(2024, 12, 1),
+                    EndDate = new DateOnly(2025, 01, 31),
+                    EmployeeId = 3,
+                    CustomerId = 3,
+                    StatusId = 1,
+                    ServiceId = 4
+                }
             );
     }
 }

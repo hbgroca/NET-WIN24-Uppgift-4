@@ -267,6 +267,11 @@ else
             return;
 
         editModeEnabled = false;
+        _project.Manager = employees.FirstOrDefault(e => e.Id == _project.ManagerId);
+        _project.Customer = customers.FirstOrDefault(c => c.Id == _project.CustomerId);
+        _project.Service = services.FirstOrDefault(s => s.Id == _project.ServicesId);
+        _project.Status = statuses.FirstOrDefault(s => s.Id == _project.StatusId);
+
         Project result = await _projectService.UpdateProject(_project);
         if (result != null)
         {
