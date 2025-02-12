@@ -2,8 +2,11 @@
 using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
+using Data.Entities;
 using Data.Interfaces;
+using Data.Repositories;
 using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace Business.Services;
 
@@ -57,6 +60,11 @@ public class CustomerServices(ICustomerRepository repository) : ICustomerService
         }
 
         return [];
+    }
+    public async Task<bool> Exists(Expression<Func<CustomerEntity, bool>> expression)
+    {
+        var result = await _customerRepository.ExistInDb(expression);
+        return result;
     }
 
     // Update

@@ -15,31 +15,30 @@
     <div class="add-user-input-container">
         <div >
             <div class="add-user-input-field">
-                <p>Organisation Id</p>
+                <p class="@(OrgNrInvalid ? "invalidText" : "")">Organisation Id</p>
                 <InputText @bind-Value="_registrationForm.OrganisationNumber" typeof="text" placeholder="Oranisation Id" class="@(OrgNrInvalid ? "invalid" : "")" />
             </div>
             <div class="add-user-input-field">
-                <p>Company name</p>
                 <InputText @bind-Value="_registrationForm.CompanyName" typeof="text" placeholder="Company name"/>
             </div>
         </div>
         <div >
             <div class="add-user-input-field">
-                <p>First name <span>(required)</span></p>
+                <p class="@(FirstNameInvalid ? "invalidText" : "")">First name <span>(required)</span></p>
                 <InputText @bind-Value="_registrationForm.FirstName" typeof="text" placeholder="First name..." class="@(FirstNameInvalid ? "invalid" : "")" />
             </div>
             <div class="add-user-input-field">
-                <p>Last name <span>(required)</span></p>
+                <p class="@(LastNameInvalid ? "invalidText" : "")">Last name <span>(required)</span></p>
                 <InputText @bind-Value="_registrationForm.LastName" typeof="text" placeholder="Last name..." class="@(LastNameInvalid ? "invalid" : "")" />
             </div>
         </div>
         <div >
             <div class="add-user-input-field">
-                <p>Email <span>(required)</span></p>
+                <p class="@(EmailInvalid ? "invalidText" : "")">Email <span>(required)</span></p>
                 <InputText @bind-Value="_registrationForm.Email" typeof="text" placeholder="Email adress..." class="@(EmailInvalid ? "invalid" : "")" />
             </div>
             <div class="add-user-input-field">
-                <p>Phone</p>
+                <p class="@(PhoneInvalid ? "invalidText" : "")">Phone</p>
                 <InputText @bind-Value="_registrationForm.Phone" typeof="text" placeholder="Phone number..." class="@(PhoneInvalid ? "invalid" : "")" />
             </div>
         </div>
@@ -67,13 +66,30 @@
             {
                 @if (editModeEnabled && selectedCustomer == customer)
                 {
-                    <td class="py-4">@customer.Id</td>
-                <td class="py-4"><InputText @bind-Value="@customer.OrganisationNumber" typeof="text" placeholder="Organisation Nr" class="@(EditModeOrgNrInvalid ? "invalid" : "")" /></td>
-                    <td class="py-4"><InputText @bind-Value="@customer.CompanyName" typeof="text" placeholder="Company name" /></td>
-                    <td class="py-4"><InputText @bind-Value="@customer.FirstName" typeof="text" placeholder="First name" class="@(EditModeFirstNameInvalid ? "invalid" : "")" /></td>
-                    <td class="py-4"><InputText @bind-Value="@customer.LastName" typeof="text" placeholder="Last name" class="@(EditModeLastNameInvalid ? "invalid" : "")" /></td>
-                    <td class="py-4"><InputText @bind-Value="@customer.Email" typeof="text" placeholder="Email adress" class="@(EditModeEmailInvalid ? "invalid" : "")" /></td>
-                    <td class="py-4"><InputText @bind-Value="@customer.Phone" typeof="text" placeholder="Phone number" class="@(EditModePhoneInvalid ? "invalid" : "")" /></td>
+                <td class="py-4 align-content-center">@customer.Id</td>
+                <td class="py-4 align-content-center">
+                    <p class="invalidText">@(EditModeOrgNrInvalid ? "Invalid org id" : "")</p>
+                        <InputText @bind-Value="@customer.OrganisationNumber" typeof="text" placeholder="Organisation Nr" class="@(EditModeOrgNrInvalid ? "invalid" : "")" />
+                    </td>
+                    <td class="py-4 align-content-center">
+                        <p></p>
+                        <InputText @bind-Value="@customer.CompanyName" typeof="text" placeholder="Company name" /></td>
+                    <td class="py-4 align-content-center">
+                    <p class="invalidText">@(EditModeFirstNameInvalid ? "Name is required" : "")</p>
+                        <InputText @bind-Value="@customer.FirstName" typeof="text" placeholder="First name" class="@(EditModeFirstNameInvalid ? "invalid" : "")" />
+                        </td>
+                    <td class="py-4 align-content-center">
+                    <p class="invalidText">@(EditModeLastNameInvalid ? "Last name is required" : "")</p>
+                        <InputText @bind-Value="@customer.LastName" typeof="text" placeholder="Last name" class="@(EditModeLastNameInvalid ? "invalid" : "")" />
+                    </td>
+                    <td class="py-4 align-content-center">
+                    <p class="invalidText">@(EditModeEmailInvalid ? "Email is required" : "")</p>
+                        <InputText @bind-Value="@customer.Email" typeof="text" placeholder="Email adress" class="@(EditModeEmailInvalid ? "invalid" : "")" />
+                    </td>
+                    <td class="py-4 align-content-center">
+                    <p class="invalidText">@(EditModePhoneInvalid ? "Phone number required" : "")</p>
+                        <InputText @bind-Value="@customer.Phone" typeof="text" placeholder="Phone number" class="@(EditModePhoneInvalid ? "invalid" : "")" />
+                    </td>
                     <td class="py-4">
                         @if (!deleteConfirmEnabled)
                         {
@@ -134,6 +150,7 @@
     private bool editModeEnabled = false;
     private bool deleteConfirmEnabled = false;
     private Customer selectedCustomer = null!;
+    private bool emailExists = false;
 
     private bool OrgNrInvalid = false;
     private bool FirstNameInvalid = false;
@@ -178,7 +195,7 @@
 
     private async Task SubmitInputs()
     {
-        if (CheckInputs())
+        if (await CheckInputs())
             return;
 
         var result = await _customerService.CreateAsync(_registrationForm);
@@ -189,7 +206,7 @@
         }
     }
 
-    private bool CheckInputs()
+    private async Task<bool> CheckInputs()
     {
         bool InvalidExists = false;
         OrgNrInvalid = false;
@@ -197,6 +214,7 @@
         LastNameInvalid = false;
         PhoneInvalid = false;
         EmailInvalid = false;
+        emailExists = false;
 
         if (string.IsNullOrWhiteSpace(_registrationForm.FirstName))
         {
@@ -251,6 +269,15 @@
                 OrgNrInvalid = true;
                 InvalidExists = true;
             }
+        }
+
+        // Check if email already exists
+        var result = await _customerService.Exists(x => x.Email == _registrationForm.Email);
+        if (result)
+        {
+            EmailInvalid = true;
+            InvalidExists = true;
+            emailExists = true;
         }
 
         return InvalidExists;

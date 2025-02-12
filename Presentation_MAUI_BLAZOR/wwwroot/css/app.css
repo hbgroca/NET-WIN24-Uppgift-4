@@ -36,8 +36,6 @@ p, span, h1, h2, h3, h4, h5, h6 {
   }
 }
 
-
-
 .hidden{
     display: none;
 }
@@ -47,6 +45,10 @@ p, span, h1, h2, h3, h4, h5, h6 {
   outline-width: 2px;
   outline-color: red;
   outline-offset: 3px;
+}
+
+.invalidText{
+  color:red;
 }
 
 a, .btn-link {

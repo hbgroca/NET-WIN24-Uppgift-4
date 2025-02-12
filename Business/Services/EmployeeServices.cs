@@ -5,6 +5,7 @@ using Business.Models;
 using Data.Entities;
 using Data.Interfaces;
 using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace Business.Services;
 
@@ -56,6 +57,12 @@ public class EmployeeServices(IEmployeeRepository repository) : IEmployeeService
         IEnumerable<Employee> employeesList = employees.Select(EmployeeFactory.Create);
 
         return employeesList;
+    }
+
+    public async Task<bool> Exists(Expression<Func<EmployeeEntity, bool>> expression)
+    {
+        var result = await _employeeRepository.ExistInDb(expression);
+        return result;
     }
 
     // Update

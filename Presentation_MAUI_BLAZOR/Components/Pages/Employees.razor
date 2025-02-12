@@ -15,21 +15,28 @@
     <div class="add-user-input-container">
         <div>
             <div class="add-user-input-field">
-                <p>First name <span>(required)</span></p>
+                <p class="@(FirstNameInvalid ? "invalidText" : "")">First name <span>(required)</span></p>
                 <InputText @bind-Value="_registrationForm.FirstName" typeof="text" placeholder="First name..." class="@(FirstNameInvalid ? "invalid" : "")" />
             </div>
             <div class="add-user-input-field">
-                <p>Last name <span>(required)</span></p>
+                <p class="@(LastNameInvalid ? "invalidText" : "")">Last name <span>(required)</span></p>
                 <InputText @bind-Value="_registrationForm.LastName" typeof="text" placeholder="Last name..." class="@(LastNameInvalid ? "invalid" : "")" />
             </div>
         </div>
         <div>
             <div class="add-user-input-field">
-                <p>Email <span>(required)</span></p>
+                @if (emailExists)
+                {
+                    <p class="invalidText">Email already exist!</p>
+                }
+                else
+                {
+                    <p class ="@(EmailInvalid ? "invalidText" : "")">Email <span>(required)</span></p>
+                }
                 <InputText @bind-Value="_registrationForm.Email" typeof="text" placeholder="Email adress..." class="@(EmailInvalid ? "invalid" : "")" />
             </div>
             <div class="add-user-input-field">
-                <p>Phone</p>
+                <p class="@(PhoneInvalid ? "invalidText" : "")">Phone</p>
                 <InputText @bind-Value="_registrationForm.Phone" typeof="text" placeholder="Phone number..." class="@(PhoneInvalid ? "invalid" : "")" />
             </div>
         </div>
@@ -54,12 +61,24 @@
             @foreach (Employee result in _employeeList)
             {
                 @if (editModeEnabled && selectedEmployee == result){
-                    <td class="py-4">@result.Id</td>
-                    <td class="py-4"><InputText @bind-Value="@result.FirstName" typeof="text" placeholder="First name" class="@(EditModeFirstNameInvalid ? "invalid" : "")" /></td>
-                    <td class="py-4"><InputText @bind-Value="@result.LastName" typeof="text" placeholder="Last name" class="@(EditModeLastNameInvalid ? "invalid" : "")" /></td>
-                    <td class="py-4"><InputText @bind-Value="@result.Email" typeof="text" placeholder="Email adress" class="@(EditModeEmailInvalid ? "invalid" : "")" /></td>
-                    <td class="py-4"><InputText @bind-Value="@result.Phone" typeof="text" placeholder="Phone number" class="@(EditModePhoneInvalid ? "invalid" : "")" /></td>
-                    <td class="py-4">
+                <td class="py-4 align-content-center">@result.Id</td>
+                <td class="py-4 align-content-center">
+                        <p class="invalidText">@(EditModeFirstNameInvalid ? "Name is required" : "")</p>
+                        <InputText @bind-Value="@result.FirstName" typeof="text" placeholder="First name" class="@(EditModeFirstNameInvalid ? "invalid" : "")" />
+                    </td>
+                <td class="py-4 align-content-center">
+                    <p class="invalidText">@(EditModeLastNameInvalid ? "Last name is required" : "")</p>
+                        <InputText @bind-Value="@result.LastName" typeof="text" placeholder="Last name" class="@(EditModeLastNameInvalid ? "invalid" : "")" />
+                    </td>
+                <td class="py-4 align-content-center">
+                        <p class="invalidText">@(EditModeEmailInvalid ? "Email is required" : "")</p>
+                        <InputText @bind-Value="@result.Email" typeof="text" placeholder="Email adress" class="@(EditModeEmailInvalid ? "invalid" : "")" />
+                    </td>
+                <td class="py-4 align-content-center">
+                        <p class="invalidText">@(EditModePhoneInvalid ? "Valid phone number required" : "")</p>
+                        <InputText @bind-Value="@result.Phone" typeof="text" placeholder="Phone number" class="@(EditModePhoneInvalid ? "invalid" : "")" />
+                    </td>
+                <td class="py-4 align-content-center">
                         @if (!deleteConfirmEnabled)
                         {
                         <button @onclick="async ()=>{await SaveUpdatedToDb(result);}">Save</button>
@@ -116,6 +135,7 @@
     private bool editModeEnabled = false;
     private bool deleteConfirmEnabled = false;
     private Employee selectedEmployee = null!;
+    private bool emailExists = false;
 
     private bool FirstNameInvalid = false;
     private bool LastNameInvalid = false;
@@ -158,7 +178,7 @@
 
     private async Task SubmitInputs()
     {
-        if (CheckInputs())
+        if (await CheckInputs())
             return;
 
         _registrationForm.Email = _registrationForm.Email.ToLower();
@@ -171,13 +191,14 @@
         }
     }
 
-    private bool CheckInputs()
+    private async Task<bool> CheckInputs()
     {
         bool InvalidExists = false;
         FirstNameInvalid = false;
         LastNameInvalid = false;
         EmailInvalid = false;
         PhoneInvalid = false;
+        emailExists = false;
 
         if (string.IsNullOrWhiteSpace(_registrationForm.FirstName))
         {
@@ -195,6 +216,17 @@
         else
             _registrationForm.LastName = _registrationForm.LastName.Trim();
 
+        if (!string.IsNullOrWhiteSpace(_registrationForm.Phone))
+        {
+            _registrationForm.Phone = _registrationForm.Phone.Trim();
+            var phonePattern = @"^\d{1,12}$";
+            if (!Regex.IsMatch(_registrationForm.Phone, phonePattern))
+            {
+                PhoneInvalid = true;
+                InvalidExists = true;
+            }
+        }
+
         if (string.IsNullOrWhiteSpace(_registrationForm.Email))
         {
             EmailInvalid = true;
@@ -211,17 +243,15 @@
             }
         }
 
-        if (!string.IsNullOrWhiteSpace(_registrationForm.Phone))
+        // Check if email already exists
+        var result = await _employeeService.Exists(x => x.Email == _registrationForm.Email);
+        if (result)
         {
-            _registrationForm.Phone = _registrationForm.Phone.Trim();
-            var phonePattern = @"^\d{1,12}$";
-            if (!Regex.IsMatch(_registrationForm.Phone, phonePattern))
-            {
-                PhoneInvalid = true;
-                InvalidExists = true;
-            }
+            EmailInvalid = true;
+            InvalidExists = true;
+            emailExists = true;
         }
-
+        
         return InvalidExists;
     }
 

@@ -13,4 +13,5 @@ public interface IBaseRepository<TEntity> where TEntity : class
     Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> expression);
     bool Update(TEntity updatedEntity);
     bool Delete(TEntity entity);
+    Task<bool> ExistInDb(Expression<Func<TEntity, bool>> expression);
 }

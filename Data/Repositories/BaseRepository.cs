@@ -116,6 +116,15 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
         return result ?? [];
     }
 
+    public virtual async Task<bool> ExistInDb(Expression<Func<TEntity, bool>> expression)
+    {
+        var result = await _dbSet.FirstOrDefaultAsync(expression);
+        if (result != null)
+            return true;
+
+        return false;
+    }
+
 
     // UPDATE
     public virtual bool Update(TEntity entity)
