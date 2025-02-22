@@ -100,9 +100,9 @@ public class ProjectServices(IProjectRepository projectRepository) : IProjectSer
                 throw new Exception("Project not found");
 
             // Remap from project to entity
-            entity = ProjectFactory.UpdateEntity(project, entity);
+            var updatedEntity = ProjectFactory.UpdateEntity(project, entity);
             // Update in dbset
-            _projectRepository.Update(entity);
+            _projectRepository.Update(updatedEntity);
             // Save changes
             var result = await _projectRepository.SaveAsync();
             if (result == 0)

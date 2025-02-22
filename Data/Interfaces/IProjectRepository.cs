@@ -6,6 +6,7 @@ public interface IProjectRepository : IBaseRepository<ProjectEntity>
 {
     new Task<IEnumerable<ProjectEntity>> GetAllAsync();
     new Task<ProjectEntity?> GetAsync(Expression<Func<ProjectEntity, bool>> expression);
+    bool Update(ProjectEntity entity);
     //Task<ProjectEntity> GetProjectAsync(Expression<Func<ProjectEntity, bool>> expression);
     //Task<IEnumerable<ProjectEntity>> GetProjectsAsync();
 }

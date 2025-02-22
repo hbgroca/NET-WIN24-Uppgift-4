@@ -18,7 +18,7 @@
         <div class="projects-container">
             @foreach (var project in projects)
             {
-                if(project.Status?.StatusDescription == "Not Started")
+                if (project.Status?.StatusDescription == "Not Started")
                 {
                     <ProjectCard Project="project"/>
                 }

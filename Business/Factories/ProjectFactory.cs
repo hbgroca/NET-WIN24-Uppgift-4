@@ -61,8 +61,8 @@ public static class ProjectFactory
     public static ProjectEntity UpdateEntity(Project project, ProjectEntity entity)
     {
         entity.ProjectName = project.Name;
-        entity.StartDate = (DateOnly)project.StartDate!;
-        entity.EndDate = (DateOnly)project.EndDate!;
+        entity.StartDate = project.StartDate ?? entity.StartDate;
+        entity.EndDate = project.EndDate;
         entity.ServiceId = project.ServicesId;
         entity.CustomerId = project.CustomerId;
         entity.EmployeeId = project.ManagerId;
@@ -70,16 +70,10 @@ public static class ProjectFactory
         entity.Description = project.Description;
         entity.ServiceCost = project.ServiceCost;
 
-
-
-        entity.Service = ServiceFactory.Create(project.Service!);
-        entity.Status = StatusFactory.Create(project.Status!);
-        entity.Customer = CustomerFactory.Create(project.Customer!);
-        entity.Employee = EmployeeFactory.Create(project.Manager!);
-
-
-
-        entity.Employee = EmployeeFactory.Create(project.Manager!);
+        entity.Status = null;
+        entity.Employee = null;
+        entity.Customer = null;
+        entity.Service = null;
 
         return entity;
     }

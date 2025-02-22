@@ -108,21 +108,37 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
 
     public virtual async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> expression)
     {
-        // Get all values that matches the expression
-        if (expression == null)
-            return null!;
+        try
+        {
+            // Get all values that matches the expression
+            if (expression == null)
+                return null!;
 
-        var result = await _dbSet.Where(expression).ToListAsync();
-        return result ?? [];
+            var result = await _dbSet.Where(expression).ToListAsync();
+            return result ?? [];
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Update - Error getting entity: {ex.Message}");
+            return [];
+        }
     }
 
     public virtual async Task<bool> ExistInDb(Expression<Func<TEntity, bool>> expression)
     {
-        var result = await _dbSet.FirstOrDefaultAsync(expression);
-        if (result != null)
-            return true;
+        try
+        {
+            var result = await _dbSet.FirstOrDefaultAsync(expression);
+            if (result != null)
+                return true;
 
-        return false;
+            return false;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"ExistInDb - Error checking if entity exists: {ex.Message}");
+            return false;
+        }
     }
 
 
